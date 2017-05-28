@@ -1,0 +1,404 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		12DEB72C1ED9C345006B4E37 /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 12DEB72B1ED9C345006B4E37 /* main.cc */; };
+		12DEB73A1ED9CBF9006B4E37 /* libncurses.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 12DEB7391ED9CBF9006B4E37 /* libncurses.tbd */; };
+		12DEB73F1ED9EA23006B4E37 /* ast.cc in Sources */ = {isa = PBXBuildFile; fileRef = 12DEB73E1ED9EA23006B4E37 /* ast.cc */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		12DEB7261ED9C345006B4E37 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		12DEB7281ED9C345006B4E37 /* tango */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tango; sourceTree = BUILT_PRODUCTS_DIR; };
+		12DEB72B1ED9C345006B4E37 /* main.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cc; sourceTree = "<group>"; };
+		12DEB7391ED9CBF9006B4E37 /* libncurses.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libncurses.tbd; path = usr/lib/libncurses.tbd; sourceTree = SDKROOT; };
+		12DEB73B1ED9CE97006B4E37 /* ast.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ast.hh; sourceTree = "<group>"; };
+		12DEB73E1ED9EA23006B4E37 /* ast.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ast.cc; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		12DEB7251ED9C345006B4E37 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12DEB73A1ED9CBF9006B4E37 /* libncurses.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		12DEB71F1ED9C345006B4E37 = {
+			isa = PBXGroup;
+			children = (
+				12DEB72A1ED9C345006B4E37 /* tango */,
+				12DEB7291ED9C345006B4E37 /* Products */,
+				12DEB7321ED9C589006B4E37 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		12DEB7291ED9C345006B4E37 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				12DEB7281ED9C345006B4E37 /* tango */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		12DEB72A1ED9C345006B4E37 /* tango */ = {
+			isa = PBXGroup;
+			children = (
+				12DEB72B1ED9C345006B4E37 /* main.cc */,
+				12DEB73B1ED9CE97006B4E37 /* ast.hh */,
+				12DEB73E1ED9EA23006B4E37 /* ast.cc */,
+			);
+			path = tango;
+			sourceTree = "<group>";
+		};
+		12DEB7321ED9C589006B4E37 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				12DEB7391ED9CBF9006B4E37 /* libncurses.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		12DEB7271ED9C345006B4E37 /* tango */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 12DEB72F1ED9C345006B4E37 /* Build configuration list for PBXNativeTarget "tango" */;
+			buildPhases = (
+				12DEB7241ED9C345006B4E37 /* Sources */,
+				12DEB7251ED9C345006B4E37 /* Frameworks */,
+				12DEB7261ED9C345006B4E37 /* CopyFiles */,
+				12DEB7381ED9C8D5006B4E37 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = tango;
+			productName = tango;
+			productReference = 12DEB7281ED9C345006B4E37 /* tango */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		12DEB7201ED9C345006B4E37 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0830;
+				ORGANIZATIONNAME = "University of Geneva";
+				TargetAttributes = {
+					12DEB7271ED9C345006B4E37 = {
+						CreatedOnToolsVersion = 8.3.2;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 12DEB7231ED9C345006B4E37 /* Build configuration list for PBXProject "tango" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 12DEB71F1ED9C345006B4E37;
+			productRefGroup = 12DEB7291ED9C345006B4E37 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				12DEB7271ED9C345006B4E37 /* tango */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		12DEB7381ED9C8D5006B4E37 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export LDFLAGS=\"$(/Volumes/Data/Developer/workspace/c++/llvm_build/install/bin/llvm-config --libs)\"\necho $LDFLAGS";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		12DEB7241ED9C345006B4E37 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12DEB73F1ED9EA23006B4E37 /* ast.cc in Sources */,
+				12DEB72C1ED9C345006B4E37 /* main.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		12DEB72D1ED9C345006B4E37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		12DEB72E1ED9C345006B4E37 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		12DEB7301ED9C345006B4E37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = "/Volumes/Data/Developer/workspace/c++/llvm_build/install/include";
+				LIBRARY_SEARCH_PATHS = "/Volumes/Data/Developer/workspace/c++/llvm_build/install/lib";
+				OTHER_LDFLAGS = (
+					"-lLLVMLTO",
+					"-lLLVMPasses",
+					"-lLLVMObjCARCOpts",
+					"-lLLVMSymbolize",
+					"-lLLVMDebugInfoPDB",
+					"-lLLVMDebugInfoDWARF",
+					"-lLLVMCoverage",
+					"-lLLVMTableGen",
+					"-lLLVMLineEditor",
+					"-lLLVMOrcJIT",
+					"-lLLVMMIRParser",
+					"-lLLVMObjectYAML",
+					"-lLLVMLibDriver",
+					"-lLLVMOption",
+					"-lLLVMX86Disassembler",
+					"-lLLVMX86AsmParser",
+					"-lLLVMX86CodeGen",
+					"-lLLVMGlobalISel",
+					"-lLLVMSelectionDAG",
+					"-lLLVMAsmPrinter",
+					"-lLLVMDebugInfoCodeView",
+					"-lLLVMDebugInfoMSF",
+					"-lLLVMX86Desc",
+					"-lLLVMMCDisassembler",
+					"-lLLVMX86Info",
+					"-lLLVMX86AsmPrinter",
+					"-lLLVMX86Utils",
+					"-lLLVMMCJIT",
+					"-lLLVMInterpreter",
+					"-lLLVMExecutionEngine",
+					"-lLLVMRuntimeDyld",
+					"-lLLVMCodeGen",
+					"-lLLVMTarget",
+					"-lLLVMCoroutines",
+					"-lLLVMipo",
+					"-lLLVMInstrumentation",
+					"-lLLVMVectorize",
+					"-lLLVMScalarOpts",
+					"-lLLVMLinker",
+					"-lLLVMIRReader",
+					"-lLLVMAsmParser",
+					"-lLLVMInstCombine",
+					"-lLLVMTransformUtils",
+					"-lLLVMBitWriter",
+					"-lLLVMAnalysis",
+					"-lLLVMObject",
+					"-lLLVMMCParser",
+					"-lLLVMMC",
+					"-lLLVMBitReader",
+					"-lLLVMProfileData",
+					"-lLLVMCore",
+					"-lLLVMSupport",
+					"-lLLVMDemangle",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		12DEB7311ED9C345006B4E37 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = "/Volumes/Data/Developer/workspace/c++/llvm_build/install/include";
+				LIBRARY_SEARCH_PATHS = "/Volumes/Data/Developer/workspace/c++/llvm_build/install/lib";
+				OTHER_LDFLAGS = (
+					"-lLLVMLTO",
+					"-lLLVMPasses",
+					"-lLLVMObjCARCOpts",
+					"-lLLVMSymbolize",
+					"-lLLVMDebugInfoPDB",
+					"-lLLVMDebugInfoDWARF",
+					"-lLLVMCoverage",
+					"-lLLVMTableGen",
+					"-lLLVMLineEditor",
+					"-lLLVMOrcJIT",
+					"-lLLVMMIRParser",
+					"-lLLVMObjectYAML",
+					"-lLLVMLibDriver",
+					"-lLLVMOption",
+					"-lLLVMX86Disassembler",
+					"-lLLVMX86AsmParser",
+					"-lLLVMX86CodeGen",
+					"-lLLVMGlobalISel",
+					"-lLLVMSelectionDAG",
+					"-lLLVMAsmPrinter",
+					"-lLLVMDebugInfoCodeView",
+					"-lLLVMDebugInfoMSF",
+					"-lLLVMX86Desc",
+					"-lLLVMMCDisassembler",
+					"-lLLVMX86Info",
+					"-lLLVMX86AsmPrinter",
+					"-lLLVMX86Utils",
+					"-lLLVMMCJIT",
+					"-lLLVMInterpreter",
+					"-lLLVMExecutionEngine",
+					"-lLLVMRuntimeDyld",
+					"-lLLVMCodeGen",
+					"-lLLVMTarget",
+					"-lLLVMCoroutines",
+					"-lLLVMipo",
+					"-lLLVMInstrumentation",
+					"-lLLVMVectorize",
+					"-lLLVMScalarOpts",
+					"-lLLVMLinker",
+					"-lLLVMIRReader",
+					"-lLLVMAsmParser",
+					"-lLLVMInstCombine",
+					"-lLLVMTransformUtils",
+					"-lLLVMBitWriter",
+					"-lLLVMAnalysis",
+					"-lLLVMObject",
+					"-lLLVMMCParser",
+					"-lLLVMMC",
+					"-lLLVMBitReader",
+					"-lLLVMProfileData",
+					"-lLLVMCore",
+					"-lLLVMSupport",
+					"-lLLVMDemangle",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		12DEB7231ED9C345006B4E37 /* Build configuration list for PBXProject "tango" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12DEB72D1ED9C345006B4E37 /* Debug */,
+				12DEB72E1ED9C345006B4E37 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		12DEB72F1ED9C345006B4E37 /* Build configuration list for PBXNativeTarget "tango" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12DEB7301ED9C345006B4E37 /* Debug */,
+				12DEB7311ED9C345006B4E37 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 12DEB7201ED9C345006B4E37 /* Project object */;
+}
