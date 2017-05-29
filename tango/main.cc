@@ -29,6 +29,7 @@
 #include <llvm/Transforms/Scalar.h>
 
 #include "ast.hh"
+#include "types.hh"
 
 #define INT_BITS 64
 #define INT_TY   llvm::Type::getInt64Ty(context)
@@ -77,43 +78,46 @@ struct IRCodeGenerator: public ASTNodeVisitor {
             ? insert_block->getParent()
             : nullptr;
 
-        switch (node.type_storage) {
-            case Tango::ts_alloc:
-                // If we're not generating the body of a function, we're
-                // looking at a global variable.
-                if (insert_block == nullptr) {
-                    // Create the global variable, initialized to 0.
-                    module->getOrInsertGlobal(node.name, INT_TY);
-                    auto global_var = module->getNamedGlobal(node.name);
-                    global_var->setLinkage(llvm::GlobalVariable::CommonLinkage);
-                    global_var->setInitializer(
-                        llvm::ConstantInt::get(context, llvm::APInt(INT_BITS, 0, true)));
+        // We can expect the node to be typed.
+        if (node.md_type == nullptr) {
+            throw std::invalid_argument("untyped node or expression");
+        }
 
-                    // Store it in globals.
-                    globals[node.name] = global_var;
-                } else {
-                    // Create an alloca for the variable.
-                    auto local_var = create_alloca(function, INT_TY, node.name);
-                    builder.CreateStore(
-                        llvm::ConstantInt::get(context, llvm::APInt(INT_BITS, 0, true)),
-                        local_var);
+        auto llvm_type = node.md_type->get_llvm_type(context);
 
-                    // Store the variable in locals.
-                    locals[node.name] = local_var;
-                }
+        if (node.md_type->is_reference()) {
+            // TODO: Handle global variables.
 
-                break;
+            // Create an alloca for the variable.
+            auto ptr_ty = static_cast<llvm::PointerType*>(llvm_type);
+            auto local_var = create_alloca(function, ptr_ty, node.name);
+            builder.CreateStore(llvm::ConstantPointerNull::get(ptr_ty), local_var);
 
-            case Tango::ts_ref:
-                {
-                    // Create an alloca for the variable.
-                    auto ptr_ty = llvm::PointerType::get(INT_TY, 0);
-                    auto local_var = create_alloca(function, ptr_ty, node.name);
-                    builder.CreateStore(llvm::ConstantPointerNull::get(ptr_ty), local_var);
+            // Store the variable in locals.
+            locals[node.name] = local_var;
+        } else {
+            // If we're not generating the body of a function, we're
+            // looking at a global variable, otherwise it is local.
+            if (insert_block == nullptr) {
+                // Create the global variable, initialized to 0.
+                module->getOrInsertGlobal(node.name, llvm_type);
+                auto global_var = module->getNamedGlobal(node.name);
+                global_var->setLinkage(llvm::GlobalVariable::CommonLinkage);
+                // global_var->setInitializer(
+                //     llvm::ConstantInt::get(context, llvm::APInt(INT_BITS, 0, true)));
 
-                    // Store the variable in locals.
-                    locals[node.name] = local_var;
-                }
+                // Store it in globals.
+                globals[node.name] = global_var;
+            } else {
+                // Create an alloca for the variable.
+                auto local_var = create_alloca(function, llvm_type, node.name);
+                // builder.CreateStore(
+                //     llvm::ConstantInt::get(context, llvm::APInt(INT_BITS, 0, true)),
+                //     local_var);
+
+                // Store the variable in locals.
+                locals[node.name] = local_var;
+            }
         }
 
         // TODO: Handle ts_heap (shared) variables.
@@ -173,6 +177,11 @@ struct IRCodeGenerator: public ASTNodeVisitor {
             throw std::invalid_argument("invalid lvalue for assignment");
         }
 
+        // We can expect both the lvalue and rvalue to be typed.
+        if (target->md_type == nullptr) {
+            throw std::invalid_argument("untyped node or expression");
+        }
+
         // Retrieve the variable from either locals, or globals.
         llvm::Value* var = nullptr;
 
@@ -191,7 +200,7 @@ struct IRCodeGenerator: public ASTNodeVisitor {
         }
 
         // Dereference var if it's a pointer.
-        if (llvm::isa<llvm::PointerType>(var->getType())) {
+        if (target->md_type->is_reference()) {
             var = builder.CreateLoad(var);
         }
 
@@ -349,12 +358,14 @@ int main(int argc, char* argv[]) {
     // Add the main function.
     add_main_function();
 
+    const TypeBase* Int = &Tango::IntType::get();
+
     auto ast = Block({
         new FunctionDecl("f", {new FunctionParam("x")}, new Block({
-            new PropertyDecl("y"),
-            // new PropertyDecl("y", Tango::tm_mut, Tango::ts_ref),
-            new Assignment(new Identifier("y"), Tango::ao_ref, new Identifier("x")),
-            new Return(new Identifier("y")),
+            (new PropertyDecl("y"))->set_type(Int),
+            new Assignment(
+                (new Identifier("y"))->set_type(Int), Tango::ao_ref, new Identifier("x")),
+            new Return((new Identifier("y"))->set_type(Int)),
         })),
 //        new Call(new Identifier("f"), {new CallArg("x", Tango::cpy_assign, new IntegerLiteral(0))})
     });
