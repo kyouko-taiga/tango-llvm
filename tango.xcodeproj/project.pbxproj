@@ -30,6 +30,7 @@
 		12DEB7391ED9CBF9006B4E37 /* libncurses.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libncurses.tbd; path = usr/lib/libncurses.tbd; sourceTree = SDKROOT; };
 		12DEB73B1ED9CE97006B4E37 /* ast.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ast.hh; sourceTree = "<group>"; };
 		12DEB73E1ED9EA23006B4E37 /* ast.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ast.cc; sourceTree = "<group>"; };
+		7585936D1EDC79CB0059F15D /* type.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = type.hh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +68,7 @@
 				12DEB72B1ED9C345006B4E37 /* main.cc */,
 				12DEB73B1ED9CE97006B4E37 /* ast.hh */,
 				12DEB73E1ED9EA23006B4E37 /* ast.cc */,
+				7585936D1EDC79CB0059F15D /* type.hh */,
 			);
 			path = tango;
 			sourceTree = "<group>";
@@ -89,7 +91,6 @@
 				12DEB7241ED9C345006B4E37 /* Sources */,
 				12DEB7251ED9C345006B4E37 /* Frameworks */,
 				12DEB7261ED9C345006B4E37 /* CopyFiles */,
-				12DEB7381ED9C8D5006B4E37 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -131,22 +132,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		12DEB7381ED9C8D5006B4E37 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export LDFLAGS=\"$(/Volumes/Data/Developer/workspace/c++/llvm_build/install/bin/llvm-config --libs)\"\necho $LDFLAGS";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		12DEB7241ED9C345006B4E37 /* Sources */ = {
@@ -253,8 +238,8 @@
 		12DEB7301ED9C345006B4E37 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = "/Volumes/Data/Developer/workspace/c++/llvm_build/install/include";
-				LIBRARY_SEARCH_PATHS = "/Volumes/Data/Developer/workspace/c++/llvm_build/install/lib";
+				HEADER_SEARCH_PATHS = "${PROJECT_DIR}/../llvm_build/install/include";
+				LIBRARY_SEARCH_PATHS = "${PROJECT_DIR}/../llvm_build/install/lib";
 				OTHER_LDFLAGS = (
 					"-lLLVMLTO",
 					"-lLLVMPasses",
@@ -317,8 +302,8 @@
 		12DEB7311ED9C345006B4E37 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = "/Volumes/Data/Developer/workspace/c++/llvm_build/install/include";
-				LIBRARY_SEARCH_PATHS = "/Volumes/Data/Developer/workspace/c++/llvm_build/install/lib";
+				HEADER_SEARCH_PATHS = "${PROJECT_DIR}/../llvm_build/install/include";
+				LIBRARY_SEARCH_PATHS = "${PROJECT_DIR}/../llvm_build/install/lib";
 				OTHER_LDFLAGS = (
 					"-lLLVMLTO",
 					"-lLLVMPasses",
@@ -397,6 +382,7 @@
 				12DEB7311ED9C345006B4E37 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -9,6 +9,7 @@
 #include <iostream>
 #include <map>
 #include <stack>
+#include <stdexcept>
 #include <string>
 
 #include <llvm/ADT/APFloat.h>
@@ -30,6 +31,7 @@
 #include "ast.hh"
 
 #define INT_BITS 64
+#define INT_TY   llvm::Type::getInt64Ty(context)
 
 
 llvm::Value* log_error(const char *msg) {
@@ -40,7 +42,9 @@ llvm::Value* log_error(const char *msg) {
 static llvm::LLVMContext context;
 static llvm::IRBuilder<> builder(context);
 static std::unique_ptr<llvm::Module> module;
-static std::map<std::string, llvm::AllocaInst*> symbol_table;
+
+static std::map<std::string, llvm::AllocaInst*>     locals;
+static std::map<std::string, llvm::GlobalVariable*> globals;
 
 /// Create an alloca instruction in the enty block of the function.
 static llvm::AllocaInst* create_alloca(
@@ -68,6 +72,51 @@ struct IRCodeGenerator: public ASTNodeVisitor {
     }
 
     void visit(PropertyDecl& node) {
+        auto insert_block = builder.GetInsertBlock();
+        auto function     = insert_block
+            ? insert_block->getParent()
+            : nullptr;
+
+        switch (node.type_storage) {
+            case Tango::ts_alloc:
+                // If we're not generating the body of a function, we're
+                // looking at a global variable.
+                if (insert_block == nullptr) {
+                    // Create the global variable, initialized to 0.
+                    module->getOrInsertGlobal(node.name, INT_TY);
+                    auto global_var = module->getNamedGlobal(node.name);
+                    global_var->setLinkage(llvm::GlobalVariable::CommonLinkage);
+                    global_var->setInitializer(
+                        llvm::ConstantInt::get(context, llvm::APInt(INT_BITS, 0, true)));
+
+                    // Store it in globals.
+                    globals[node.name] = global_var;
+                } else {
+                    // Create an alloca for the variable.
+                    auto local_var = create_alloca(function, INT_TY, node.name);
+                    builder.CreateStore(
+                        llvm::ConstantInt::get(context, llvm::APInt(INT_BITS, 0, true)),
+                        local_var);
+
+                    // Store the variable in locals.
+                    locals[node.name] = local_var;
+                }
+
+                break;
+
+            case Tango::ts_ref:
+                {
+                    // Create an alloca for the variable.
+                    auto ptr_ty = llvm::PointerType::get(INT_TY, 0);
+                    auto local_var = create_alloca(function, ptr_ty, node.name);
+                    builder.CreateStore(llvm::ConstantPointerNull::get(ptr_ty), local_var);
+
+                    // Store the variable in locals.
+                    locals[node.name] = local_var;
+                }
+        }
+
+        // TODO: Handle ts_heap (shared) variables.
     }
 
     void visit(FunctionParam& node) {}
@@ -95,21 +144,19 @@ struct IRCodeGenerator: public ASTNodeVisitor {
         auto basic_block = llvm::BasicBlock::Create(context, "entry", function);
         builder.SetInsertPoint(basic_block);
 
-        // Store the function parameters in the symbol table.
-        symbol_table.clear();
+        // Store the function parameters in the local symbol table.
+        locals.clear();
         for (auto& arg: function->args()) {
             // Create an alloca for the argument, and store its value.
             auto alloca = create_alloca(function, llvm::Type::getInt64Ty(context), arg.getName());
             builder.CreateStore(&arg, alloca);
 
             // Update the symbol table.
-            symbol_table[arg.getName()] = alloca;
+            locals[arg.getName()] = alloca;
         }
 
         // Generate the body of the function.
-        node.body->statements[0]->accept(*this);
-        builder.CreateRet(this->stack.top());
-        this->stack.pop();
+        node.body->accept(*this);
         builder.ClearInsertionPoint();
 
         // Validate the generated code, checking for consistency.
@@ -118,44 +165,85 @@ struct IRCodeGenerator: public ASTNodeVisitor {
         this->stack.push(function);
     }
 
-    void visit(If& node) {
-        // Generate the IR code for the node's condition.
-        node.condition->accept(*this);
-        auto condition = this->stack.top();
+    void visit(Assignment& node) {
+        // Until we implement select and subscript expressions, we can expect
+        // the lvalue to always be an identifier.
+        auto target = dynamic_cast<Identifier*>(node.lvalue);
+        if (target == nullptr) {
+            throw std::invalid_argument("invalid lvalue for assignment");
+        }
+
+        // Retrieve the variable from either locals, or globals.
+        llvm::Value* var = nullptr;
+
+        auto local_it = locals.find(target->name);
+        if (local_it != locals.end()) {
+            var = local_it->second;
+        } else {
+            auto global_it = globals.find(target->name);
+            if (global_it != globals.end()) {
+                var = global_it->second;
+            }
+        }
+
+        if (var == nullptr) {
+            throw std::invalid_argument("undefined symbol");
+        }
+
+        // Dereference var if it's a pointer.
+        if (llvm::isa<llvm::PointerType>(var->getType())) {
+            var = builder.CreateLoad(var);
+        }
+
+        // Push the IR code of the rvalue onto the stack.
+        node.rvalue->accept(*this);
+
+        // Create a store instruction.
+        builder.CreateStore(this->stack.top(), var);
         this->stack.pop();
+    }
 
-        // TODO: Make sure the condition is a value of type i1 (bool).
-
-        // Get the current function object.
-        auto function   = builder.GetInsertBlock()->getParent();
-
-        // Create a a conditional branching block.
-        auto then_block = llvm::BasicBlock::Create(context, "then", function);
-        auto else_block = llvm::BasicBlock::Create(context, "else");
-        auto branch     = builder.CreateCondBr(condition, then_block, else_block);
-
-        // Generate the IR code for the "then" block.
-        builder.SetInsertPoint(then_block);
-        node.then_block->accept(*this);
-
-        std::vector<llvm::Value*> values;
-        while (!this->stack.empty()) {
-            values.insert(values.begin(), this->stack.top());
-            this->stack.pop();
-        }
-
-        for (auto value: values) {
-
-        }
+    void visit(If& node) {
+//        // Generate the IR code for the node's condition.
+//        node.condition->accept(*this);
+//        auto condition = this->stack.top();
+//        this->stack.pop();
+//
+//        // TODO: Make sure the condition is a value of type i1 (bool).
+//
+//        // Get the current function object.
+//        auto function   = builder.GetInsertBlock()->getParent();
+//
+//        // Create a a conditional branching block.
+//        auto then_block = llvm::BasicBlock::Create(context, "then", function);
+//        auto else_block = llvm::BasicBlock::Create(context, "else");
+//        auto branch     = builder.CreateCondBr(condition, then_block, else_block);
+//
+//        // Generate the IR code for the "then" block.
+//        builder.SetInsertPoint(then_block);
+//        node.then_block->accept(*this);
+//
+//        std::vector<llvm::Value*> values;
+//        while (!this->stack.empty()) {
+//            values.insert(values.begin(), this->stack.top());
+//            this->stack.pop();
+//        }
     }
 
     void visit(Return& node) {
-        // Push the IR code of the return value onto the stack.
+        // Make sure we're generating a function's body.
+        if (builder.GetInsertBlock() == nullptr) {
+            log_error("return statement outside of a function body");
+        }
+
+        // Push the IR code of the return value onto the stack and create the
+        // return statement.
         node.value->accept(*this);
+        builder.CreateRet(this->stack.top());
     }
 
     void visit(BinaryExpr& node) {
-        // Visit the left and right operand and put their IR code on the stack.
+        // Push the IR code of the left and right operand onto the stack,
         node.left->accept(*this);
         node.right->accept(*this);
 
@@ -219,8 +307,8 @@ struct IRCodeGenerator: public ASTNodeVisitor {
     void visit(CallArg& node) {}
 
     void visit(Identifier& node) {
-        // Look for the identifier in the symbol table.
-        auto value = symbol_table[node.name];
+        // Look for the identifier in the local symbol table.
+        auto value = locals[node.name];
         if (value == nullptr) {
             log_error("undefined symbol");
             return;
@@ -239,15 +327,36 @@ struct IRCodeGenerator: public ASTNodeVisitor {
 };
 
 
+void add_main_function() {
+    auto i32  = llvm::IntegerType::getInt32Ty(module->getContext());
+    auto i8   = llvm::IntegerType::getInt8Ty(module->getContext());
+    auto i8pp = llvm::PointerType::getUnqual(llvm::PointerType::getUnqual(i8));
+
+    // define i32 @main(i32, i8**)
+    auto fn = static_cast<llvm::Function*>(module->getOrInsertFunction("main", i32, i32, i8pp));
+    auto bb = llvm::BasicBlock::Create(module->getContext(), "entry", fn);
+
+    // ret i32 0
+    llvm::IRBuilder<> tb(bb, bb->begin());
+    tb.CreateRet(llvm::ConstantInt::get(module->getContext(), llvm::APInt(32, 0)));
+}
+
+
 int main(int argc, char* argv[]) {
     // Create the module, which holds all the code.
     module = llvm::make_unique<llvm::Module>("tango module", context);
 
+    // Add the main function.
+    add_main_function();
+
     auto ast = Block({
-        new FunctionDecl("f", {new FunctionParam("x", Tango::cst)}, new Block({
-            new Return(new Identifier("x"))
-        }))
-        //new Call(new Identifier("f"), {new CallArg("x", Tango::cpy_assign, new IntegerLiteral(0))})
+        new FunctionDecl("f", {new FunctionParam("x")}, new Block({
+            new PropertyDecl("y"),
+            // new PropertyDecl("y", Tango::tm_mut, Tango::ts_ref),
+            new Assignment(new Identifier("y"), Tango::ao_ref, new Identifier("x")),
+            new Return(new Identifier("y")),
+        })),
+//        new Call(new Identifier("f"), {new CallArg("x", Tango::cpy_assign, new IntegerLiteral(0))})
     });
 
     // Generate the IR code of the module.
@@ -255,9 +364,9 @@ int main(int argc, char* argv[]) {
     ast.accept(code_generator);
 
     // Create an optimization pass manager.
-    // auto pass_manager = llvm::make_unique<llvm::legacy::PassManager>();
-    // pass_manager->add(llvm::createPromoteMemoryToRegisterPass());
-    // pass_manager->run(*(module.get()));
+//     auto pass_manager = llvm::make_unique<llvm::legacy::PassManager>();
+//     pass_manager->add(llvm::createPromoteMemoryToRegisterPass());
+//     pass_manager->run(*(module.get()));
 
     module.get()->dump();
 

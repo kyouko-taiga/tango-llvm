@@ -16,20 +16,23 @@ namespace Tango {
 
     struct ASTNodeVisitor;
 
-    // Enumeration for property/parameter mutability.
-    enum Mutability {
-        cst, mut, shd
+    // Enumerations for type attributes.
+    enum TypeMutability {
+        tm_cst, tm_mut,
+    };
+
+    enum TypeStorage {
+        ts_alloc,
+        ts_ref,
     };
 
     // Enumerations of operators.
     enum Operator {
-        add, sub, mul, div
+        add, sub, mul, div,
     };
 
     enum AssignmentOperator {
-        cpy_assign,
-        ref_assign,
-        mov_assign
+        ao_cpy, ao_ref, ao_mov,
     };
 
     /// Base class for all AST nodes.
@@ -54,24 +57,28 @@ namespace Tango {
 
     // AST node for property declarations.
     struct PropertyDecl: public ASTNode {
-        PropertyDecl(const std::string& name, Mutability mutability):
-            name(name), mutability(mutability) {}
+        PropertyDecl(
+            const std::string& name, TypeMutability tm = tm_cst, TypeStorage ts = ts_alloc):
+            name(name), type_mutability(tm), type_storage(ts) {}
 
         void accept(ASTNodeVisitor& visitor);
 
-        std::string name;
-        Mutability mutability;
+        std::string    name;
+        TypeMutability type_mutability;
+        TypeStorage    type_storage;
     };
 
     /// AST node for function parameters.
     struct FunctionParam: public ASTNode {
-        FunctionParam(const std::string& name, Mutability mutability):
-            name(name), mutability(mutability) {}
+        FunctionParam(
+            const std::string& name, TypeMutability tm = tm_cst, TypeStorage ts = ts_alloc):
+            name(name), type_mutability(tm), type_storage(ts) {}
 
         void accept(ASTNodeVisitor& visitor);
 
-        std::string name;
-        Mutability mutability;
+        std::string    name;
+        TypeMutability type_mutability;
+        TypeStorage    type_storage;
     };
 
     /// AST node for function declarations.
@@ -91,6 +98,20 @@ namespace Tango {
         Block* body;
     };
 
+    // AST node for assignments.
+    struct Assignment: public ASTNode {
+        Assignment(ASTNode* lvalue, AssignmentOperator op, ASTNode* rvalue):
+            lvalue(lvalue), op(op), rvalue(rvalue) {}
+
+        ~Assignment();
+
+        void accept(ASTNodeVisitor& visitor);
+
+        ASTNode*           lvalue;
+        AssignmentOperator op;
+        ASTNode*           rvalue;
+    };
+
     // AST node for conditional statements.
     struct If: public ASTNode {
         If(ASTNode* condition, Block* then_block, Block* else_block):
@@ -101,8 +122,8 @@ namespace Tango {
         void accept(ASTNodeVisitor& visitor);
 
         ASTNode* condition;
-        Block* then_block;
-        Block* else_block;
+        Block*   then_block;
+        Block*   else_block;
     };
 
     /// AST node for return statements.
@@ -139,9 +160,9 @@ namespace Tango {
 
         void accept(ASTNodeVisitor& visitor);
 
-        std::string label;
+        std::string        label;
         AssignmentOperator op;
-        ASTNode* value;
+        ASTNode*           value;
     };
 
     /// AST node for call expressions.
@@ -180,6 +201,7 @@ namespace Tango {
         virtual void visit(PropertyDecl&   node) = 0;
         virtual void visit(FunctionParam&  node) = 0;
         virtual void visit(FunctionDecl&   node) = 0;
+        virtual void visit(Assignment&     node) = 0;
         virtual void visit(If&             node) = 0;
         virtual void visit(Return&         node) = 0;
         virtual void visit(BinaryExpr&     node) = 0;

@@ -49,6 +49,17 @@ namespace Tango {
 
     // -----------------------------------------------------------------------
 
+    Assignment::~Assignment() {
+        delete this->lvalue;
+        delete this->rvalue;
+    }
+
+    void Assignment::accept(ASTNodeVisitor& visitor) {
+        visitor.visit(*this);
+    }
+
+    // -----------------------------------------------------------------------
+
     If::~If() {
         delete this->condition;
         delete this->then_block;
