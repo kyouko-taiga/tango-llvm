@@ -35,6 +35,15 @@ namespace tango {
 
 namespace irgen {
 
+    /// Struct that stores a function object, i.e. a LLVM Function and the
+    /// location of its environment.
+    struct FunctionObject {
+
+        llvm::Function* function;
+        llvm::Value*    environment;
+
+    };
+
     struct IRGenerator: public ASTNodeVisitor {
 
         IRGenerator(llvm::Module& mod, llvm::IRBuilder<>& irb);

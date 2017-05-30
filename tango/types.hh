@@ -12,7 +12,15 @@
 #include <string>
 #include <vector>
 
-#include <llvm/IR/Type.h>
+
+namespace llvm {
+
+    class FunctionType;
+    class LLVMContext;
+    class StructType;
+    class Type;
+
+} // namespace llvm
 
 
 namespace tango {
@@ -82,6 +90,11 @@ namespace tango {
         bool is_reference() const { return false; }
 
         llvm::Type* get_llvm_type(llvm::LLVMContext&) const;
+
+        /// Same as #get_llvm_type, but adding the fonction's environment as
+        /// its first parameter.
+        llvm::FunctionType* get_llvm_lifted_type(
+            llvm::LLVMContext&, llvm::StructType* env) const;
 
         std::vector<TypePtr>     domain;
         std::vector<std::string> labels;

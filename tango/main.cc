@@ -40,19 +40,29 @@ int main(int argc, char* argv[]) {
 //    });
 
     // def f(cst x: Int) -> Int {
-    //     cst y = x
-    //     return y
+    //     return x
     // }
     auto ast = Block({
         (new FunctionDecl("f", {new FunctionParam("x")}, new Block({
-            (new PropertyDecl("y"))->set_type(Int),
-            new Assignment(
-                (new Identifier("y"))->set_type(Int),
-                tango::ao_cpy,
-                (new Identifier("x"))->set_type(Int)),
-            new Return((new Identifier("y"))->set_type(Int)),
+            new Return((new Identifier("x"))->set_type(Int)),
         })))->set_type(Int2Int),
     });
+    static_cast<FunctionDecl*>(ast.statements[0])->md_captures.push_back(std::make_pair("y", Int));
+
+//    // def f(cst x: Int) -> Int {
+//    //     cst y = x
+//    //     return y
+//    // }
+//    auto ast = Block({
+//        (new FunctionDecl("f", {new FunctionParam("x")}, new Block({
+//            (new PropertyDecl("y"))->set_type(Int),
+//            new Assignment(
+//                (new Identifier("y"))->set_type(Int),
+//                tango::ao_cpy,
+//                (new Identifier("x"))->set_type(Int)),
+//            new Return((new Identifier("y"))->set_type(Int)),
+//        })))->set_type(Int2Int),
+//    });
 
 //    // mut z: Int
 //    // def f(cst x: Int) -> Int {

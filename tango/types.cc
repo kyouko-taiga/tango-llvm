@@ -27,6 +27,17 @@ namespace tango {
         return llvm::FunctionType::get(this->codomain->get_llvm_type(ctx), arg_types, false);
     }
 
+    llvm::FunctionType* FunctionType::get_llvm_lifted_type(
+        llvm::LLVMContext& ctx, llvm::StructType* env_type) const
+    {
+        std::vector<llvm::Type*> arg_types;
+        arg_types.push_back(llvm::PointerType::getUnqual(env_type));
+        for (auto ty: this->domain) {
+            arg_types.push_back(ty->get_llvm_type(ctx));
+        }
+        return llvm::FunctionType::get(this->codomain->get_llvm_type(ctx), arg_types, false);
+    }
+
     // -----------------------------------------------------------------------
 
     llvm::Type* IntType::get_llvm_type(llvm::LLVMContext& ctx) const {

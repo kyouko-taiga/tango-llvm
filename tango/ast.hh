@@ -112,6 +112,9 @@ namespace tango {
         std::string                 name;
         std::vector<FunctionParam*> parameters;
         Block*                      body;
+
+        /// List of the symbols the function decl captures by closure.
+        std::vector<std::pair<std::string, TypePtr>> md_captures;
     };
 
     // AST node for assignments.
