@@ -46,9 +46,11 @@ namespace irgen {
 
 
     llvm::Value* IRGenerator::get_symbol_location(const std::string& name) {
-        auto local_it = locals.find(name);
-        if (local_it != locals.end()) {
-            return local_it->second;
+        if (!locals.empty()) {
+            auto local_it = locals.top().find(name);
+            if (local_it != locals.top().end()) {
+                return local_it->second;
+            }
         }
 
         auto global_it = globals.find(name);

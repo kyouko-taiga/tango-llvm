@@ -40,7 +40,7 @@ namespace irgen {
 
             // Create an alloca for the variable, and store it as a local
             // symbol table.
-            locals[node.name] = create_alloca(fun, prop_type, node.name);
+            locals.top()[node.name] = create_alloca(fun, prop_type, node.name);
         }
 
         // TODO: Handle garbage collected variables.

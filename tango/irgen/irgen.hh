@@ -46,6 +46,9 @@ namespace irgen {
 
     struct IRGenerator: public ASTNodeVisitor {
 
+        typedef std::map<std::string, llvm::AllocaInst*>     LocalSymbolTable;
+        typedef std::map<std::string, llvm::GlobalVariable*> GlobalSymbolTable;
+
         IRGenerator(llvm::Module& mod, llvm::IRBuilder<>& irb);
         // IRGenerator(const IRGenerator&) = delete;
 
@@ -88,10 +91,10 @@ namespace irgen {
         /// A stack of maps of local symbols.
         ///
         /// It's a stack so that we can handle nested function definitions.
-        std::map<std::string, llvm::AllocaInst*> locals;
+        std::stack<LocalSymbolTable> locals;
 
         /// A map of global symbols.
-        std::map<std::string, llvm::GlobalVariable*> globals;
+        GlobalSymbolTable globals;
 
         /// A stack of pointers to the alloca that represent the return space
         /// of the function declaration being visited.
