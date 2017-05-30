@@ -9,13 +9,14 @@
 #pragma once
 
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
 #include "types.hh"
 
 
-namespace Tango {
+namespace tango {
 
     // Identifier attributes.
     enum IdentifierMutability {
@@ -42,12 +43,19 @@ namespace Tango {
         virtual void accept(ASTNodeVisitor& visitor) = 0;
 
         // Following are metadata about AST nodes.
-        const TypeBase* md_type = nullptr;
+        TypePtr md_type;
 
         // Following are helpers to create ASTs inline.
-        ASTNode* set_type(const TypeBase* type) {
+        ASTNode* set_type(TypePtr type) {
             this->md_type = type;
             return this;
+        }
+
+        TypePtr get_type() const {
+            if (this->md_type == nullptr) {
+                throw std::invalid_argument("untyped node or expression");
+            }
+            return this->md_type;
         }
     };
 
@@ -233,4 +241,4 @@ namespace Tango {
         virtual void visit(IntegerLiteral& node) = 0;
     };
 
-} // namespace Tango
+} // namespace tango

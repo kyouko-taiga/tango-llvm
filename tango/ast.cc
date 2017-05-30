@@ -8,7 +8,7 @@
 
 #include "ast.hh"
 
-namespace Tango {
+namespace tango {
 
     Block::~Block() {
         for(std::size_t i = 0; i < this->statements.size(); ++i) {
@@ -127,4 +127,4 @@ namespace Tango {
         visitor.visit(*this);
     }
 
-} // namespace Tango
+} // namespace tango

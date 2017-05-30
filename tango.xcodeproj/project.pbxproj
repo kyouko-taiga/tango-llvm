@@ -10,6 +10,17 @@
 		12DEB72C1ED9C345006B4E37 /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 12DEB72B1ED9C345006B4E37 /* main.cc */; };
 		12DEB73A1ED9CBF9006B4E37 /* libncurses.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 12DEB7391ED9CBF9006B4E37 /* libncurses.tbd */; };
 		12DEB73F1ED9EA23006B4E37 /* ast.cc in Sources */ = {isa = PBXBuildFile; fileRef = 12DEB73E1ED9EA23006B4E37 /* ast.cc */; };
+		7569EF7F1EDD56A700710ADB /* types.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7569EF7D1EDD56A700710ADB /* types.cc */; };
+		7569EF831EDDA7BC00710ADB /* block.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7569EF821EDDA7BC00710ADB /* block.cc */; };
+		7569EF851EDDA8E900710ADB /* propertydecl.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7569EF841EDDA8E900710ADB /* propertydecl.cc */; };
+		7569EF871EDDABB400710ADB /* irgen.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7569EF861EDDABB400710ADB /* irgen.cc */; };
+		7569EF891EDDB5B900710ADB /* functiondecl.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7569EF881EDDB5B900710ADB /* functiondecl.cc */; };
+		7569EF8B1EDDB73E00710ADB /* assignment.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7569EF8A1EDDB73E00710ADB /* assignment.cc */; };
+		7569EF8D1EDDBC2E00710ADB /* if.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7569EF8C1EDDBC2E00710ADB /* if.cc */; };
+		7569EF8F1EDDBC6400710ADB /* return.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7569EF8E1EDDBC6400710ADB /* return.cc */; };
+		7569EF911EDDBCD600710ADB /* call.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7569EF901EDDBCD600710ADB /* call.cc */; };
+		7569EF931EDDBD5400710ADB /* identifier.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7569EF921EDDBD5400710ADB /* identifier.cc */; };
+		7569EF951EDDBDD100710ADB /* literals.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7569EF941EDDBDD100710ADB /* literals.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -30,7 +41,19 @@
 		12DEB7391ED9CBF9006B4E37 /* libncurses.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libncurses.tbd; path = usr/lib/libncurses.tbd; sourceTree = SDKROOT; };
 		12DEB73B1ED9CE97006B4E37 /* ast.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ast.hh; sourceTree = "<group>"; };
 		12DEB73E1ED9EA23006B4E37 /* ast.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ast.cc; sourceTree = "<group>"; };
-		7585936D1EDC79CB0059F15D /* type.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = type.hh; sourceTree = "<group>"; };
+		7569EF7D1EDD56A700710ADB /* types.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = types.cc; sourceTree = "<group>"; };
+		7569EF7E1EDD56A700710ADB /* types.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = types.hh; sourceTree = "<group>"; };
+		7569EF811EDDA37C00710ADB /* irgen.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = irgen.hh; sourceTree = "<group>"; };
+		7569EF821EDDA7BC00710ADB /* block.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = block.cc; sourceTree = "<group>"; };
+		7569EF841EDDA8E900710ADB /* propertydecl.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = propertydecl.cc; sourceTree = "<group>"; };
+		7569EF861EDDABB400710ADB /* irgen.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = irgen.cc; sourceTree = "<group>"; };
+		7569EF881EDDB5B900710ADB /* functiondecl.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = functiondecl.cc; sourceTree = "<group>"; };
+		7569EF8A1EDDB73E00710ADB /* assignment.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = assignment.cc; sourceTree = "<group>"; };
+		7569EF8C1EDDBC2E00710ADB /* if.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = if.cc; sourceTree = "<group>"; };
+		7569EF8E1EDDBC6400710ADB /* return.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = return.cc; sourceTree = "<group>"; };
+		7569EF901EDDBCD600710ADB /* call.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = call.cc; sourceTree = "<group>"; };
+		7569EF921EDDBD5400710ADB /* identifier.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = identifier.cc; sourceTree = "<group>"; };
+		7569EF941EDDBDD100710ADB /* literals.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = literals.cc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,10 +88,12 @@
 		12DEB72A1ED9C345006B4E37 /* tango */ = {
 			isa = PBXGroup;
 			children = (
+				7569EF801EDDA31000710ADB /* irgen */,
 				12DEB72B1ED9C345006B4E37 /* main.cc */,
 				12DEB73B1ED9CE97006B4E37 /* ast.hh */,
 				12DEB73E1ED9EA23006B4E37 /* ast.cc */,
-				7585936D1EDC79CB0059F15D /* type.hh */,
+				7569EF7E1EDD56A700710ADB /* types.hh */,
+				7569EF7D1EDD56A700710ADB /* types.cc */,
 			);
 			path = tango;
 			sourceTree = "<group>";
@@ -79,6 +104,24 @@
 				12DEB7391ED9CBF9006B4E37 /* libncurses.tbd */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7569EF801EDDA31000710ADB /* irgen */ = {
+			isa = PBXGroup;
+			children = (
+				7569EF811EDDA37C00710ADB /* irgen.hh */,
+				7569EF861EDDABB400710ADB /* irgen.cc */,
+				7569EF821EDDA7BC00710ADB /* block.cc */,
+				7569EF841EDDA8E900710ADB /* propertydecl.cc */,
+				7569EF881EDDB5B900710ADB /* functiondecl.cc */,
+				7569EF8A1EDDB73E00710ADB /* assignment.cc */,
+				7569EF8C1EDDBC2E00710ADB /* if.cc */,
+				7569EF8E1EDDBC6400710ADB /* return.cc */,
+				7569EF901EDDBCD600710ADB /* call.cc */,
+				7569EF921EDDBD5400710ADB /* identifier.cc */,
+				7569EF941EDDBDD100710ADB /* literals.cc */,
+			);
+			path = irgen;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,8 +181,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7569EF8B1EDDB73E00710ADB /* assignment.cc in Sources */,
+				7569EF851EDDA8E900710ADB /* propertydecl.cc in Sources */,
+				7569EF931EDDBD5400710ADB /* identifier.cc in Sources */,
+				7569EF951EDDBDD100710ADB /* literals.cc in Sources */,
 				12DEB73F1ED9EA23006B4E37 /* ast.cc in Sources */,
+				7569EF831EDDA7BC00710ADB /* block.cc in Sources */,
+				7569EF8D1EDDBC2E00710ADB /* if.cc in Sources */,
+				7569EF911EDDBCD600710ADB /* call.cc in Sources */,
+				7569EF891EDDB5B900710ADB /* functiondecl.cc in Sources */,
+				7569EF7F1EDD56A700710ADB /* types.cc in Sources */,
 				12DEB72C1ED9C345006B4E37 /* main.cc in Sources */,
+				7569EF871EDDABB400710ADB /* irgen.cc in Sources */,
+				7569EF8F1EDDBC6400710ADB /* return.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,7 +292,10 @@
 		12DEB7301ED9C345006B4E37 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = "${PROJECT_DIR}/../llvm_build/install/include";
+				HEADER_SEARCH_PATHS = (
+					"${PROJECT_DIR}/../llvm_build/install/include",
+					"$(PROJECT_DIR)",
+				);
 				LIBRARY_SEARCH_PATHS = "${PROJECT_DIR}/../llvm_build/install/lib";
 				OTHER_LDFLAGS = (
 					"-lLLVMLTO",
@@ -302,7 +359,10 @@
 		12DEB7311ED9C345006B4E37 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = "${PROJECT_DIR}/../llvm_build/install/include";
+				HEADER_SEARCH_PATHS = (
+					"${PROJECT_DIR}/../llvm_build/install/include",
+					"$(PROJECT_DIR)",
+				);
 				LIBRARY_SEARCH_PATHS = "${PROJECT_DIR}/../llvm_build/install/lib";
 				OTHER_LDFLAGS = (
 					"-lLLVMLTO",

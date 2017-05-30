@@ -11,10 +11,20 @@
 #include "types.hh"
 
 
-namespace Tango {
+namespace tango {
 
     llvm::Type* RefType::get_llvm_type(llvm::LLVMContext& ctx) const {
-        return llvm::PointerType::getUnqual(this->referred_type.get_llvm_type(ctx));
+        return llvm::PointerType::getUnqual(this->referred_type->get_llvm_type(ctx));
+    }
+
+    // -----------------------------------------------------------------------
+
+    llvm::Type* FunctionType::get_llvm_type(llvm::LLVMContext& ctx) const {
+        std::vector<llvm::Type*> arg_types;
+        for (auto ty: this->domain) {
+            arg_types.push_back(ty->get_llvm_type(ctx));
+        }
+        return llvm::FunctionType::get(this->codomain->get_llvm_type(ctx), arg_types, false);
     }
 
     // -----------------------------------------------------------------------
@@ -23,4 +33,4 @@ namespace Tango {
         return llvm::Type::getInt64Ty(ctx);
     }
 
-} // namespace Tango
+} // namespace tango
