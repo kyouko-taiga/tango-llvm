@@ -29,7 +29,7 @@ namespace irgen {
         }
 
         // Store it on the return alloca.
-        builder.CreateStore(rv, this->current_return_alloca);
+        builder.CreateStore(rv, return_alloca.top());
     }
 
 } // namespace irgen

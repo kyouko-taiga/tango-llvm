@@ -32,8 +32,9 @@ namespace irgen {
         auto basic_block = llvm::BasicBlock::Create(module.getContext(), "entry", fun);
         builder.SetInsertPoint(basic_block);
 
-        // Create an alloca for the return value.
-        this->current_return_alloca = create_alloca(fun, fun_type->getReturnType(), "rv");
+        // Store the alloca and return type of the return value.
+        return_alloca.push(create_alloca(fun, fun_type->getReturnType(), "rv"));
+        return_type.push(std::dynamic_pointer_cast<FunctionType>(node.get_type())->codomain);
 
         // Store the function parameters in the local symbol table.
         locals.clear();
@@ -46,10 +47,10 @@ namespace irgen {
 
         // Generate the body of the function.
         node.body->accept(*this);
-        builder.CreateRet(builder.CreateLoad(this->current_return_alloca));
+        builder.CreateRet(builder.CreateLoad(return_alloca.top()));
 
-        this->current_return_alloca = nullptr;
-        this->current_return_type.reset();
+        return_alloca.pop();
+        return_type.pop();
         builder.ClearInsertionPoint();
         
         // Validate the generated code, checking for consistency.

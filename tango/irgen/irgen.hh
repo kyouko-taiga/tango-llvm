@@ -76,18 +76,25 @@ namespace irgen {
         /// statement has been generated.
         std::stack<llvm::Value*> stack;
 
-        /// A map of local symbols.
+        /// A stack of maps of local symbols.
+        ///
+        /// It's a stack so that we can handle nested function definitions.
         std::map<std::string, llvm::AllocaInst*> locals;
 
         /// A map of global symbols.
         std::map<std::string, llvm::GlobalVariable*> globals;
+
+        /// A stack of pointers to the alloca that represent the return space
+        /// of the function declaration being visited.
+        ///
+        /// It's a stack so that we can handle nested function definitions.
+        std::stack<llvm::AllocaInst*> return_alloca;
         
-        /// A pointer to the alloca that represent the return space of the function
-        /// declaration being visited.
-        llvm::AllocaInst* current_return_alloca = nullptr;
-        
-        /// The Tango return type of the function declaration being visited.
-        TypePtr current_return_type = nullptr;
+        /// A stack of Tango types that represent the return type of the
+        /// function declaration being visited.
+        ///
+        /// It's a stack so that we can handle nested function definitions.
+        std::stack<TypePtr> return_type;
     };
 
     /// Create an alloca instruction in the enty block of the function.

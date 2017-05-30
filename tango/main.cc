@@ -29,30 +29,30 @@ int main(int argc, char* argv[]) {
     TypePtr Int_p   = tango::RefType::get(Int);
     TypePtr Int2Int = tango::FunctionType::get({Int}, {"x"}, {Int});
 
-    // mut x
-    // x = 0
-    auto ast = Block({
-        (new PropertyDecl("x"))->set_type(Int),
-        new Assignment(
-            (new Identifier("x"))->set_type(Int),
-            tango::ao_cpy,
-            (new IntegerLiteral(10))->set_type(Int)),
-    });
-
-//    // def f(cst x: Int) -> Int {
-//    //     cst y = x
-//    //     return y
-//    // }
+//    // mut x
+//    // x = 0
 //    auto ast = Block({
-//        (new FunctionDecl("f", {new FunctionParam("x")}, new Block({
-//            (new PropertyDecl("y"))->set_type(Int),
-//            new Assignment(
-//                (new Identifier("y"))->set_type(Int),
-//                Tango::ao_cpy,
-//                (new Identifier("x"))->set_type(Int)),
-//            new Return((new Identifier("y"))->set_type(Int)),
-//        })))->set_type(Int2Int),
+//        (new PropertyDecl("x"))->set_type(Int),
+//        new Assignment(
+//            (new Identifier("x"))->set_type(Int),
+//            tango::ao_cpy,
+//            (new IntegerLiteral(10))->set_type(Int)),
 //    });
+
+    // def f(cst x: Int) -> Int {
+    //     cst y = x
+    //     return y
+    // }
+    auto ast = Block({
+        (new FunctionDecl("f", {new FunctionParam("x")}, new Block({
+            (new PropertyDecl("y"))->set_type(Int),
+            new Assignment(
+                (new Identifier("y"))->set_type(Int),
+                tango::ao_cpy,
+                (new Identifier("x"))->set_type(Int)),
+            new Return((new Identifier("y"))->set_type(Int)),
+        })))->set_type(Int2Int),
+    });
 
 //    // mut z: Int
 //    // def f(cst x: Int) -> Int {
