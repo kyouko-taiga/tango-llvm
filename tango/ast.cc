@@ -29,7 +29,7 @@ namespace tango {
 
     // -----------------------------------------------------------------------
 
-    void FunctionParam::accept(ASTNodeVisitor& visitor) {
+    void ParamDecl::accept(ASTNodeVisitor& visitor) {
         visitor.visit(*this);
     }
 

@@ -48,18 +48,8 @@ namespace irgen {
     void IRGenerator::visit(Assignment& node) {
         // If we're not generating the body of a function, we should insert
         // the statement in the main function.
-        auto insert_block = builder.GetInsertBlock();
-        if (insert_block == nullptr) {
-            auto main_fun = module.getFunction("main");
-            if (main_fun == nullptr) {
-                throw std::invalid_argument("invalid top-level statement");
-            }
-            builder.SetInsertPoint(&main_fun->getEntryBlock());
-
-            // Note that we don't need to clear the insertion point once we've
-            // generated the assignment instruction, as either we'll put
-            // another instruction after, or we'll set the insertion point in
-            // another function's body anyway.
+        if (builder.GetInsertBlock() == nullptr) {
+            move_to_main_function();
         }
 
         // Until we implement select and subscript expressions, we can expect

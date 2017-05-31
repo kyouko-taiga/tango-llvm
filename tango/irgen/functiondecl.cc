@@ -9,6 +9,7 @@
 #include <llvm/IR/Verifier.h>
 
 #include "irgen.hh"
+#include "tango/captureinfo.hh"
 
 
 namespace tango {
@@ -22,6 +23,7 @@ namespace irgen {
     {
         // Create a new basic block to start insertion into.
         auto bb = llvm::BasicBlock::Create(gen.module.getContext(), "entry", fun);
+        auto ib = gen.builder.GetInsertBlock();
         gen.builder.SetInsertPoint(bb);
 
         // Store the alloca and (Tango) return type of the return value.
@@ -45,7 +47,12 @@ namespace irgen {
         gen.return_alloca.pop();
         gen.return_type.pop();
         gen.locals.pop();
-        gen.builder.ClearInsertionPoint();
+
+        if (ib == nullptr) {
+            gen.builder.ClearInsertionPoint();
+        } else {
+            gen.builder.SetInsertPoint(ib);
+        }
 
         // Validate the generated code, checking for consistency.
         llvm::verifyFunction(*fun);
@@ -75,54 +82,63 @@ namespace irgen {
 
 
     void emit_nested_function(FunctionDecl& node, IRGenerator& gen) {
-        // Generate the LLVM type of the function.
-        llvm::FunctionType* fun_type;
-        auto& ctx = gen.module.getContext();
+        // Create the "lifted" type of the function.
+        std::vector<llvm::Type*> free_types;
+        for (auto val: node.capture_list) {
+            free_types.push_back(val.decl->get_type()->get_llvm_type(gen.module.getContext()));
 
-        // If the function doesn't have any free variable, we can create
-        // a "normal" function type.
-        if (node.md_captures.empty()) {
-            fun_type = static_cast<llvm::FunctionType*>(node.get_type()->get_llvm_type(ctx));
-        } else {
-            // Create a StructType to store the function's environment.
-            auto env_type = llvm::StructType::create(ctx, node.name + "_env_t");
-            std::vector<llvm::Type*> members;
-            for (auto capture: node.md_captures) {
-                // Closures capture local references by copy, so we
-                // store the referred type in the environment rather
-                // than the pointer to.
-                auto tango_type = capture.second->is_reference()
-                    ? std::static_pointer_cast<RefType>(capture.second)->referred_type
-                    : capture.second;
-                members.push_back(tango_type->get_llvm_type(ctx));
-            }
-            env_type->setBody(members);
-
-            // Create a "lifted" function type.
-            fun_type = std::static_pointer_cast<FunctionType>(node.get_type())
-                ->get_llvm_lifted_type(ctx, env_type);
+            // NOTE: Escaping closures shouldn't capture local references,
+            // as such we should get the referred type of reference types
+            // when dealing with them.
         }
+        llvm::FunctionType* fun_type = std::static_pointer_cast<FunctionType>(node.get_type())
+            ->get_llvm_lifted_type(gen.module.getContext(), free_types);
 
-        // Create the function object.
+        // Create the LLVM function prototype.
         auto fun = llvm::Function::Create(
-            fun_type, llvm::Function::ExternalLinkage, node.name, &gen.module);
+            fun_type, llvm::Function::PrivateLinkage, node.name, &gen.module);
         fun->addFnAttr(llvm::Attribute::NoUnwind);
 
         // Set the name of the function arguments.
-        std::size_t idx = 0;
         auto arg_it = fun->arg_begin();
-        if (!node.md_captures.empty()) {
-            arg_it->setName("__env");
+        for (auto val: node.capture_list) {
+            arg_it->setName(val.decl->name);
             arg_it++;
         }
+        std::size_t idx = 0;
         while (arg_it != fun->arg_end()) {
-            arg_it->setName(node.parameters[idx]->name);
+            arg_it->setName(node.parameters[idx++]->name);
             arg_it++;
-            idx++;
         }
 
         // Generate the function body.
         emit_function_body(node, fun, fun_type, gen);
+
+        // Create a local symbol representing the first-class function object
+        auto current_fun = gen.builder.GetInsertBlock()->getParent();
+        auto alloca = create_alloca(current_fun, gen.tango_types.closure_t, node.name);
+
+        // Store the function pointer.
+        // %0 = getelementptr %closure_t, %closure_t* %<fun_name>, i32 0, i32 0
+        // store i8* bitcast (<fun_ptr> @<fun_name> to i8*), i8** %0
+        auto zero = gen.get_gep_index(0);
+        gen.builder.CreateStore(
+            gen.builder.CreateBitCast(fun, gen.tango_types.voidp_t),
+            gen.builder.CreateGEP(alloca, {zero, zero}));
+
+        // If the function isn't escaping, it doesn't need an environment.
+        // %1 = getelementptr %closure_t, %closure_t* %<fun_name>, i32 0, i32 1
+        // store i8* null, i8** %1
+        gen.builder.CreateStore(
+            llvm::ConstantPointerNull::get(gen.tango_types.voidp_t),
+            gen.builder.CreateGEP(alloca, {zero, gen.get_gep_index(1)}));
+
+        // Store the closure info.
+        gen.closures[node.name] = ClosureInfo(&node, llvm::PointerType::getUnqual(fun_type));
+
+        // TODO: Handle escaping closures.
+
+        gen.locals.top()[node.name] = alloca;
     }
 
 

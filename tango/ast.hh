@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 
+#include "captureinfo.hh"
 #include "types.hh"
 
 
@@ -59,7 +60,7 @@ namespace tango {
         }
     };
 
-    // AST node for blocks of instructions.
+    /// AST node for blocks of instructions.
     struct Block: public ASTNode {
         Block(const std::vector<ASTNode*> statements):
             statements(statements) {}
@@ -68,61 +69,71 @@ namespace tango {
 
         void accept(ASTNodeVisitor& visitor);
 
+        const std::string& get_name() const {
+            throw std::invalid_argument("Block nodes have no name.");
+        };
+
         std::vector<ASTNode*> statements;
     };
 
-    // AST node for property declarations.
-    struct PropertyDecl: public ASTNode {
+    /// Virtual class for AST declaration nodes.
+    struct Decl: public ASTNode {
+        Decl(const std::string& name): name(name) {}
+
+        virtual ~Decl() {};
+
+        std::string name;
+    };
+
+    /// AST node for property declarations.
+    struct PropertyDecl: public Decl {
         PropertyDecl(
-                const std::string&   name,
-                IdentifierMutability im = im_cst):
-            name(name), mutability(im) {}
+            const std::string&   name,
+            IdentifierMutability im = im_cst):
+            Decl(name), mutability(im) {}
 
         void accept(ASTNodeVisitor& visitor);
 
-        std::string          name;
         IdentifierMutability mutability;
     };
 
     /// AST node for function parameters.
-    struct FunctionParam: public ASTNode {
-        FunctionParam(
-                const std::string&   name,
-                IdentifierMutability im = im_cst):
-            name(name), mutability(im) {}
+    struct ParamDecl: public Decl {
+        ParamDecl(
+            const std::string&   name,
+            IdentifierMutability im = im_cst):
+            Decl(name), mutability(im) {}
 
         void accept(ASTNodeVisitor& visitor);
 
-        std::string          name;
         IdentifierMutability mutability;
     };
 
     /// AST node for function declarations.
-    struct FunctionDecl: public ASTNode {
+    struct FunctionDecl: public Decl {
         FunctionDecl(
-                const std::string&                 name,
-                const std::vector<FunctionParam*>& parameters,
-                Block*                             body):
-            name(name), parameters(parameters), body(body) {}
+            const std::string&                name,
+            const std::vector<ParamDecl*>&    parameters,
+            Block*                            body):
+            Decl(name), parameters(parameters), body(body) {}
 
         ~FunctionDecl();
 
         void accept(ASTNodeVisitor& visitor);
 
-        std::string                 name;
-        std::vector<FunctionParam*> parameters;
-        Block*                      body;
+        std::vector<ParamDecl*> parameters;
+        Block*                  body;
 
-        /// List of the symbols the function decl captures by closure.
-        std::vector<std::pair<std::string, TypePtr>> md_captures;
+        /// Lists the local captures of the function.
+        std::vector<CapturedValue> capture_list;
     };
 
     // AST node for assignments.
     struct Assignment: public ASTNode {
         Assignment(
-                ASTNode*           lvalue,
-                AssignmentOperator op,
-                ASTNode*           rvalue):
+            ASTNode*           lvalue,
+            AssignmentOperator op,
+            ASTNode*           rvalue):
             lvalue(lvalue), op(op), rvalue(rvalue) {}
 
         ~Assignment();
@@ -137,9 +148,9 @@ namespace tango {
     // AST node for conditional statements.
     struct If: public ASTNode {
         If(
-                ASTNode* condition,
-                Block*   then_block,
-                Block*   else_block):
+            ASTNode* condition,
+            Block*   then_block,
+            Block*   else_block):
             condition(condition), then_block(then_block), else_block(else_block) {}
 
         ~If();
@@ -165,9 +176,9 @@ namespace tango {
     /// AST node for binary expressions.
     struct BinaryExpr: public ASTNode {
         BinaryExpr(
-                ASTNode* left,
-                ASTNode* right,
-                Operator op):
+            ASTNode* left,
+            ASTNode* right,
+            Operator op):
             left(left), right(right), op(op) {}
 
         ~BinaryExpr();
@@ -182,9 +193,9 @@ namespace tango {
     // AST node for call arguments.
     struct CallArg: public ASTNode {
         CallArg(
-                const std::string& label,
-                AssignmentOperator op,
-                ASTNode*           value):
+            const std::string& label,
+            AssignmentOperator op,
+            ASTNode*           value):
             label(label), op(op), value(value) {}
 
         ~CallArg();
@@ -199,8 +210,8 @@ namespace tango {
     /// AST node for call expressions.
     struct Call: public ASTNode {
         Call(
-                ASTNode*                     callee,
-                const std::vector<CallArg*>& arguments):
+            ASTNode*                     callee,
+            const std::vector<CallArg*>& arguments):
             callee(callee), arguments(arguments) {}
 
         ~Call();
@@ -232,7 +243,7 @@ namespace tango {
     struct ASTNodeVisitor {
         virtual void visit(Block&          node) = 0;
         virtual void visit(PropertyDecl&   node) = 0;
-        virtual void visit(FunctionParam&  node) = 0;
+        virtual void visit(ParamDecl&      node) = 0;
         virtual void visit(FunctionDecl&   node) = 0;
         virtual void visit(Assignment&     node) = 0;
         virtual void visit(If&             node) = 0;

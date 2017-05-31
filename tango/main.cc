@@ -17,6 +17,7 @@
 #include <llvm/Transforms/Scalar.h>
 
 #include "ast.hh"
+#include "captureinfo.hh"
 #include "types.hh"
 #include "irgen/irgen.hh"
 
@@ -40,21 +41,52 @@ int main(int argc, char* argv[]) {
 //    });
 
     // def f(cst x: Int) -> Int {
-    //     return x
+    //     def g(cst y: Int) -> Int {
+    //         return x
+    //     }
+    //     return g(y = 0)
     // }
+    // f(x = 42)
     auto ast = Block({
-        (new FunctionDecl("f", {new FunctionParam("x")}, new Block({
-            new Return((new Identifier("x"))->set_type(Int)),
-        })))->set_type(Int2Int),
+        new FunctionDecl("f", {new ParamDecl("x")}, new Block({
+            new FunctionDecl("g", {new ParamDecl("y")}, new Block({
+                new Return(new Identifier("x")),
+            })),
+            new Return(
+                new Call(new Identifier("g"), {new CallArg("y", tango::ao_cpy, new IntegerLiteral(0))})),
+        })),
+        new Call(new Identifier("f"), {new CallArg("x", tango::ao_cpy, new IntegerLiteral(42))})
     });
-    static_cast<FunctionDecl*>(ast.statements[0])->md_captures.push_back(std::make_pair("y", Int));
+
+    auto f_decl = static_cast<FunctionDecl*>(ast.statements[0]);
+    f_decl->set_type(Int2Int);
+    f_decl->parameters[0]->set_type(Int);
+
+    auto g_decl = static_cast<FunctionDecl*>(f_decl->body->statements[0]);
+    g_decl->set_type(Int2Int);
+    g_decl->parameters[0]->set_type(Int);
+    g_decl->capture_list.push_back(CapturedValue(f_decl->parameters[0]));
+    static_cast<Return*>(g_decl->body->statements[0])->value->set_type(Int);
+
+    auto f_return = static_cast<Return*>(f_decl->body->statements[1]);
+    f_return->value->set_type(Int);
+
+    auto call_to_g = static_cast<Call*>(f_return->value);
+    call_to_g->set_type(Int);
+    call_to_g->callee->set_type(Int2Int);
+    call_to_g->arguments[0]->value->set_type(Int);
+
+    auto call_to_f = static_cast<Call*>(ast.statements[1]);
+    call_to_f->set_type(Int);
+    call_to_f->callee->set_type(Int2Int);
+    call_to_f->arguments[0]->value->set_type(Int);
 
 //    // def f(cst x: Int) -> Int {
 //    //     cst y = x
 //    //     return y
 //    // }
 //    auto ast = Block({
-//        (new FunctionDecl("f", {new FunctionParam("x")}, new Block({
+//        (new FunctionDecl("f", {new ParamDecl("x")}, new Block({
 //            (new PropertyDecl("y"))->set_type(Int),
 //            new Assignment(
 //                (new Identifier("y"))->set_type(Int),
@@ -72,7 +104,7 @@ int main(int argc, char* argv[]) {
 //    // }
 //    auto ast = Block({
 //        (new PropertyDecl("z"))->set_type(Int),
-//        (new FunctionDecl("f", {new FunctionParam("x")}, new Block({
+//        (new FunctionDecl("f", {new ParamDecl("x")}, new Block({
 //            (new PropertyDecl("y"))->set_type(Int_p),
 //            new Assignment(
 //                (new Identifier("y"))->set_type(Int_p),

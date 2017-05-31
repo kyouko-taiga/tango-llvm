@@ -17,7 +17,7 @@ namespace irgen {
     IRGenerator::IRGenerator(
         llvm::Module& mod,
         llvm::IRBuilder<>& irb):
-    module(mod), builder(llvm::IRBuilder<>(mod.getContext())) {}
+        module(mod), builder(llvm::IRBuilder<>(mod.getContext())), tango_types(mod.getContext()) {}
 
 
     void IRGenerator::add_main_function() {
@@ -45,6 +45,20 @@ namespace irgen {
     }
 
 
+    void IRGenerator::move_to_main_function() {
+        auto main_fun = module.getFunction("main");
+        if (main_fun == nullptr) {
+            throw std::invalid_argument("invalid top-level statement");
+        }
+        builder.SetInsertPoint(&main_fun->getEntryBlock());
+
+        // Note that we don't need to clear the insertion point once we've
+        // generated the assignment instruction, as either we'll put
+        // another instruction after, or we'll set the insertion point in
+        // another function's body anyway.
+    }
+
+
     llvm::Value* IRGenerator::get_symbol_location(const std::string& name) {
         if (!locals.empty()) {
             auto local_it = locals.top().find(name);
@@ -59,6 +73,11 @@ namespace irgen {
         }
 
         throw std::invalid_argument("undefined symbol");
+    }
+
+
+    llvm::Value* IRGenerator::get_gep_index(int idx) {
+        return llvm::ConstantInt::get(module.getContext(), llvm::APInt(32, idx, false));
     }
 
 

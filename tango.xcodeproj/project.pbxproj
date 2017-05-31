@@ -54,6 +54,7 @@
 		7569EF901EDDBCD600710ADB /* call.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = call.cc; sourceTree = "<group>"; };
 		7569EF921EDDBD5400710ADB /* identifier.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = identifier.cc; sourceTree = "<group>"; };
 		7569EF941EDDBDD100710ADB /* literals.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = literals.cc; sourceTree = "<group>"; };
+		7569EF961EDEC46800710ADB /* captureinfo.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = captureinfo.hh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +95,7 @@
 				12DEB73E1ED9EA23006B4E37 /* ast.cc */,
 				7569EF7E1EDD56A700710ADB /* types.hh */,
 				7569EF7D1EDD56A700710ADB /* types.cc */,
+				7569EF961EDEC46800710ADB /* captureinfo.hh */,
 			);
 			path = tango;
 			sourceTree = "<group>";

@@ -17,8 +17,9 @@ namespace llvm {
 
     class FunctionType;
     class LLVMContext;
-    class StructType;
+    class PointerType;
     class Type;
+    class StructType;
 
 } // namespace llvm
 
@@ -94,7 +95,7 @@ namespace tango {
         /// Same as #get_llvm_type, but adding the fonction's environment as
         /// its first parameter.
         llvm::FunctionType* get_llvm_lifted_type(
-            llvm::LLVMContext&, llvm::StructType* env) const;
+            llvm::LLVMContext&, std::vector<llvm::Type*> free_types) const;
 
         std::vector<TypePtr>     domain;
         std::vector<std::string> labels;
@@ -123,6 +124,19 @@ namespace tango {
         static TypePtr get() {
             return std::make_shared<IntType>();
         }
+
+    };
+
+    // -----------------------------------------------------------------------
+
+    struct TangoLLVMTypes {
+
+        TangoLLVMTypes(llvm::LLVMContext&);
+
+        llvm::PointerType* voidp_t;
+
+        llvm::Type*        integer_t;
+        llvm::StructType*  closure_t;
 
     };
 

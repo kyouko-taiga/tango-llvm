@@ -11,6 +11,7 @@
 #include <memory>
 #include <stack>
 #include <string>
+#include <unordered_map>
 #include <llvm/IR/IRBuilder.h>
 
 #include "tango/ast.hh"
@@ -35,19 +36,23 @@ namespace tango {
 
 namespace irgen {
 
-    /// Struct that stores a function object, i.e. a LLVM Function and the
-    /// location of its environment.
-    struct FunctionObject {
+    /// Struct that stores a function object and its capture list.
+    struct ClosureInfo {
+        ClosureInfo(FunctionDecl* decl, llvm::Type* pointer_type)
+            : decl(decl), pointer_type(pointer_type) {}
+        ClosureInfo(const ClosureInfo& other)
+            : decl(other.decl), pointer_type(other.pointer_type) {};
+        ClosureInfo()
+            : decl(nullptr), pointer_type(nullptr) {}
 
-        llvm::Function* function;
-        llvm::Value*    environment;
-
+        FunctionDecl* decl;
+        llvm::Type*   pointer_type;
     };
 
     struct IRGenerator: public ASTNodeVisitor {
-
-        typedef std::map<std::string, llvm::AllocaInst*>     LocalSymbolTable;
-        typedef std::map<std::string, llvm::GlobalVariable*> GlobalSymbolTable;
+        typedef std::unordered_map<std::string, llvm::AllocaInst*>     LocalSymbolTable;
+        typedef std::unordered_map<std::string, llvm::GlobalVariable*> GlobalSymbolTable;
+        typedef std::unordered_map<std::string, ClosureInfo>           ClosureInfoTable;
 
         IRGenerator(llvm::Module& mod, llvm::IRBuilder<>& irb);
         // IRGenerator(const IRGenerator&) = delete;
@@ -62,9 +67,9 @@ namespace irgen {
         void visit(Identifier&);
         void visit(IntegerLiteral&);
 
-        void visit(FunctionParam&) {}
-        void visit(BinaryExpr&)    {}
-        void visit(CallArg&)       {}
+        void visit(ParamDecl&)  {}
+        void visit(BinaryExpr&) {}
+        void visit(CallArg&)    {}
 
         /// Adds a main function to the module under generation.
         void add_main_function();
@@ -72,8 +77,14 @@ namespace irgen {
         /// Adds a return value to the main function.
         void finish_main_function(llvm::Value* exit_status = nullptr);
 
+        /// Moves the insertion point of the builder to the main function.
+        void move_to_main_function();
+
         /// Returns the location of a symbol from the local or global table.
         llvm::Value* get_symbol_location(const std::string& name);
+
+        // Returns an LLVM value suitable for GEP indices.
+        llvm::Value* get_gep_index(int idx);
 
         /// A reference to the LLVM module being generated.
         llvm::Module& module;
@@ -96,6 +107,9 @@ namespace irgen {
         /// A map of global symbols.
         GlobalSymbolTable globals;
 
+        /// A map of closure objects.
+        ClosureInfoTable closures;
+
         /// A stack of pointers to the alloca that represent the return space
         /// of the function declaration being visited.
         ///
@@ -107,6 +121,9 @@ namespace irgen {
         ///
         /// It's a stack so that we can handle nested function definitions.
         std::stack<TypePtr> return_type;
+
+        /// A store for the Tango types definitions.
+        TangoLLVMTypes tango_types;
     };
 
     /// Create an alloca instruction in the enty block of the function.
