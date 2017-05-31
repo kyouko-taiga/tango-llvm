@@ -9,6 +9,7 @@
 #pragma once
 
 #include <memory>
+#include <set>
 #include <stack>
 #include <string>
 #include <unordered_map>
@@ -50,6 +51,7 @@ namespace irgen {
     };
 
     struct IRGenerator: public ASTNodeVisitor {
+        typedef std::set<std::string>                                  LocalCaptures;
         typedef std::unordered_map<std::string, llvm::AllocaInst*>     LocalSymbolTable;
         typedef std::unordered_map<std::string, llvm::GlobalVariable*> GlobalSymbolTable;
         typedef std::unordered_map<std::string, ClosureInfo>           ClosureInfoTable;
@@ -91,12 +93,12 @@ namespace irgen {
 
         /// The main LLVM IR builder.
         llvm::IRBuilder<> builder;
-        
-        /// A stack that lets us accumulate the LLVM values of expressions, before
-        /// they are consumed by a statement.
+
+        /// A stack that lets us accumulate the LLVM values of expressions,
+        /// before they are consumed by a statement.
         ///
-        /// The stack should be emptied every time after the IR of a particular
-        /// statement has been generated.
+        /// The stack should be emptied every time after the IR of a
+        /// particular statement has been generated.
         std::stack<llvm::Value*> stack;
 
         /// A stack of maps of local symbols.
@@ -104,10 +106,16 @@ namespace irgen {
         /// It's a stack so that we can handle nested function definitions.
         std::stack<LocalSymbolTable> locals;
 
+        /// A stack of sets of captured symbols, that are used to determine if
+        /// a local symbol corresponds to a pointer to a captured value.
+        ///
+        /// It's a stack so that we can handle nested function definitions.
+        std::stack<LocalCaptures> local_captures;
+
         /// A map of global symbols.
         GlobalSymbolTable globals;
 
-        /// A map of closure objects.
+        /// A map of the ClosureInfo objects.
         ClosureInfoTable closures;
 
         /// A stack of pointers to the alloca that represent the return space

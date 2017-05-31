@@ -48,14 +48,13 @@ namespace irgen {
             // Dereference the function pointer.
             auto raw_ptr = builder.CreateLoad(builder.CreateGEP(closure_loc, {zero, zero}));
             auto callee = builder.CreateBitCast(raw_ptr, closure_info.pointer_type);
-            callee->getType()->dump();
 
             // Set the function's captured values.
             std::vector<llvm::Value*> args;
             for (auto cval: closure_info.decl->capture_list) {
                 // Get the value of the captured value.
                 auto val = get_symbol_location(cval.decl->name);
-                args.push_back(builder.CreateLoad(val));
+                args.push_back(val);
             }
 
             // Set the function's other arguments.

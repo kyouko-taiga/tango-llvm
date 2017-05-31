@@ -77,19 +77,31 @@ namespace irgen {
         }
 
         // Generate the function body.
+        gen.local_captures.push(IRGenerator::LocalCaptures());
         emit_function_body(node, fun, fun_type, gen);
+        gen.local_captures.pop();
     }
 
 
     void emit_nested_function(FunctionDecl& node, IRGenerator& gen) {
-        // Create the "lifted" type of the function.
-        std::vector<llvm::Type*> free_types;
-        for (auto val: node.capture_list) {
-            free_types.push_back(val.decl->get_type()->get_llvm_type(gen.module.getContext()));
+        // NOTE: We lift nested functions by adding their free variables to
+        // their parameters. So as to handle mutable captures, we pass those
+        // free variables by reference. If such reference passing is necessary
+        // for mutable values, it isn't for constant captures. For those, it
+        // requires unnecessary dereferencing, which could be more expensive
+        // than value passing for primitive types (or cheap-to-copy types).
 
-            // NOTE: Escaping closures shouldn't capture local references,
-            // as such we should get the referred type of reference types
-            // when dealing with them.
+        std::vector<llvm::Type*> free_types;
+
+        // We also need to keep track of which local symbols correspond to
+        // captured values, so we can dereference them during the IR
+        // generation of the function body.
+        IRGenerator::LocalCaptures fun_local_captures;
+
+        for (auto val: node.capture_list) {
+            auto free_type = val.decl->get_type()->get_llvm_type(gen.module.getContext());
+            free_types.push_back(llvm::PointerType::getUnqual(free_type));
+            fun_local_captures.insert(val.decl->name);
         }
         llvm::FunctionType* fun_type = std::static_pointer_cast<FunctionType>(node.get_type())
             ->get_llvm_lifted_type(gen.module.getContext(), free_types);
@@ -112,7 +124,9 @@ namespace irgen {
         }
 
         // Generate the function body.
+        gen.local_captures.push(std::move(fun_local_captures));
         emit_function_body(node, fun, fun_type, gen);
+        gen.local_captures.pop();
 
         // Create a local symbol representing the first-class function object
         auto current_fun = gen.builder.GetInsertBlock()->getParent();

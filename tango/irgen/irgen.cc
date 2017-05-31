@@ -63,6 +63,10 @@ namespace irgen {
         if (!locals.empty()) {
             auto local_it = locals.top().find(name);
             if (local_it != locals.top().end()) {
+                // Dereference the location if the symbol has been captured.
+                if (local_captures.top().find(name) != local_captures.top().end()) {
+                    return builder.CreateLoad(local_it->second);
+                }
                 return local_it->second;
             }
         }
