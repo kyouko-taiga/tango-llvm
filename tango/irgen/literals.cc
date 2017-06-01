@@ -16,5 +16,9 @@ namespace irgen {
         stack.push(llvm::ConstantInt::get(module.getContext(), llvm::APInt(64, node.value, true)));
     }
 
+    void IRGenerator::visit(BooleanLiteral& node) {
+        stack.push(llvm::ConstantInt::get(module.getContext(), llvm::APInt(1, node.value, false)));
+    }
+
 } // namespace irgen
 } // namespace tango

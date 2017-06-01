@@ -46,6 +46,12 @@ namespace tango {
 
     // -----------------------------------------------------------------------
 
+    llvm::Type* BoolType::get_llvm_type(llvm::LLVMContext& ctx) const {
+        return llvm::Type::getInt1Ty(ctx);
+    }
+
+    // -----------------------------------------------------------------------
+
     TangoLLVMTypes::TangoLLVMTypes(llvm::LLVMContext& ctx) {
         // void* type.
         voidp_t = llvm::PointerType::getUnqual(llvm::Type::getInt8Ty(ctx));

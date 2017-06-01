@@ -29,57 +29,79 @@ int main(int argc, char* argv[]) {
     TypePtr Int     = tango::IntType::get();
     TypePtr Int_p   = tango::RefType::get(Int);
     TypePtr Int2Int = tango::FunctionType::get({Int}, {"x"}, {Int});
+    TypePtr Bool    = tango::BoolType::get();
 
-//    // mut x
-//    // x = 0
-//    auto ast = Block({
-//        (new PropertyDecl("x"))->set_type(Int),
-//        new Assignment(
-//            (new Identifier("x"))->set_type(Int),
-//            tango::ao_cpy,
-//            (new IntegerLiteral(10))->set_type(Int)),
-//    });
-
-    // def f(cst x: Int) -> Int {
-    //     def g(cst y: Int) -> Int {
-    //         return x
-    //     }
-    //     return g(y = 0)
+    // cst x: Int
+    // if true {
+    //     x = 5
+    // } else {
+    //     x = 10
     // }
-    // f(x = 42)
     auto ast = Block({
-        new FunctionDecl("f", {new ParamDecl("x")}, new Block({
-            new FunctionDecl("g", {new ParamDecl("y")}, new Block({
-                new Return(new Identifier("x")),
+        new PropertyDecl("x"),
+        new If(
+            new BooleanLiteral(true),
+            new Block({
+                new Assignment(new Identifier("x"), tango::ao_cpy, new IntegerLiteral(5))
+            }),
+            new Block({
+                new Assignment(new Identifier("x"), tango::ao_cpy, new IntegerLiteral(10))
             })),
-            new Return(
-                new Call(new Identifier("g"), {new CallArg("y", tango::ao_cpy, new IntegerLiteral(0))})),
-        })),
-        new Call(new Identifier("f"), {new CallArg("x", tango::ao_cpy, new IntegerLiteral(42))})
     });
 
-    auto f_decl = static_cast<FunctionDecl*>(ast.statements[0]);
-    f_decl->set_type(Int2Int);
-    f_decl->parameters[0]->set_type(Int);
+    ast.statements[0]->set_type(Int);
 
-    auto g_decl = static_cast<FunctionDecl*>(f_decl->body->statements[0]);
-    g_decl->set_type(Int2Int);
-    g_decl->parameters[0]->set_type(Int);
-    g_decl->capture_list.push_back(CapturedValue(f_decl->parameters[0]));
-    static_cast<Return*>(g_decl->body->statements[0])->value->set_type(Int);
+    auto if_stmt = static_cast<If*>(ast.statements[1]);
+    if_stmt->condition->set_type(Bool);
 
-    auto f_return = static_cast<Return*>(f_decl->body->statements[1]);
-    f_return->value->set_type(Int);
+    auto x_assign = static_cast<Assignment*>(if_stmt->then_block->statements[0]);
+    x_assign->lvalue->set_type(Int);
+    x_assign->rvalue->set_type(Int);
 
-    auto call_to_g = static_cast<Call*>(f_return->value);
-    call_to_g->set_type(Int);
-    call_to_g->callee->set_type(Int2Int);
-    call_to_g->arguments[0]->value->set_type(Int);
+    x_assign = static_cast<Assignment*>(if_stmt->else_block->statements[0]);
+    x_assign->lvalue->set_type(Int);
+    x_assign->rvalue->set_type(Int);
 
-    auto call_to_f = static_cast<Call*>(ast.statements[1]);
-    call_to_f->set_type(Int);
-    call_to_f->callee->set_type(Int2Int);
-    call_to_f->arguments[0]->value->set_type(Int);
+//    // def f(cst x: Int) -> Int {
+//    //     def g(cst y: Int) -> Int {
+//    //         return x
+//    //     }
+//    //     return g(y = 0)
+//    // }
+//    // f(x = 42)
+//    auto ast = Block({
+//        new FunctionDecl("f", {new ParamDecl("x")}, new Block({
+//            new FunctionDecl("g", {new ParamDecl("y")}, new Block({
+//                new Return(new Identifier("x")),
+//            })),
+//            new Return(
+//                new Call(new Identifier("g"), {new CallArg("y", tango::ao_cpy, new IntegerLiteral(0))})),
+//        })),
+//        new Call(new Identifier("f"), {new CallArg("x", tango::ao_cpy, new IntegerLiteral(42))})
+//    });
+//
+//    auto f_decl = static_cast<FunctionDecl*>(ast.statements[0]);
+//    f_decl->set_type(Int2Int);
+//    f_decl->parameters[0]->set_type(Int);
+//
+//    auto g_decl = static_cast<FunctionDecl*>(f_decl->body->statements[0]);
+//    g_decl->set_type(Int2Int);
+//    g_decl->parameters[0]->set_type(Int);
+//    g_decl->capture_list.push_back(CapturedValue(f_decl->parameters[0]));
+//    static_cast<Return*>(g_decl->body->statements[0])->value->set_type(Int);
+//
+//    auto f_return = static_cast<Return*>(f_decl->body->statements[1]);
+//    f_return->value->set_type(Int);
+//
+//    auto call_to_g = static_cast<Call*>(f_return->value);
+//    call_to_g->set_type(Int);
+//    call_to_g->callee->set_type(Int2Int);
+//    call_to_g->arguments[0]->value->set_type(Int);
+//
+//    auto call_to_f = static_cast<Call*>(ast.statements[1]);
+//    call_to_f->set_type(Int);
+//    call_to_f->callee->set_type(Int2Int);
+//    call_to_f->arguments[0]->value->set_type(Int);
 
 //    // def f(cst x: Int) -> Int {
 //    //     cst y = x
@@ -132,6 +154,8 @@ int main(int argc, char* argv[]) {
     // Create an optimization pass manager.
     auto pass_manager = llvm::make_unique<llvm::legacy::PassManager>();
     pass_manager->add(llvm::createPromoteMemoryToRegisterPass());
+//    pass_manager->add(llvm::createInstructionCombiningPass());
+//    pass_manager->add(llvm::createReassociatePass());
     pass_manager->run(module);
 
     module.dump();

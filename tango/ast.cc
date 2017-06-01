@@ -127,4 +127,10 @@ namespace tango {
         visitor.visit(*this);
     }
 
+    // -----------------------------------------------------------------------
+
+    void BooleanLiteral::accept(ASTNodeVisitor& visitor) {
+        visitor.visit(*this);
+    }
+
 } // namespace tango

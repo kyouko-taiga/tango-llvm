@@ -69,6 +69,7 @@ namespace irgen {
         void visit(Call&);
         void visit(Identifier&);
         void visit(IntegerLiteral&);
+        void visit(BooleanLiteral&);
 
         void visit(ParamDecl&)  {}
         void visit(BinaryExpr&) {}

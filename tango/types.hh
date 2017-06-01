@@ -129,6 +129,22 @@ namespace tango {
 
     // -----------------------------------------------------------------------
 
+    struct BoolType: public NominalType {
+
+        BoolType(): NominalType("Bool") {}
+
+        bool is_primitive() const { return true; }
+
+        llvm::Type* get_llvm_type(llvm::LLVMContext&) const;
+
+        static TypePtr get() {
+            return std::make_shared<IntType>();
+        }
+        
+    };
+
+    // -----------------------------------------------------------------------
+
     struct TangoLLVMTypes {
 
         TangoLLVMTypes(llvm::LLVMContext&);

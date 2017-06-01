@@ -240,6 +240,15 @@ namespace tango {
         int value;
     };
 
+    /// AST node for boolean literals.
+    struct BooleanLiteral: public ASTNode {
+        BooleanLiteral(bool value): value(value) {}
+
+        void accept(ASTNodeVisitor& visitor);
+
+        bool value;
+    };
+
     struct ASTNodeVisitor {
         virtual void visit(Block&          node) = 0;
         virtual void visit(PropertyDecl&   node) = 0;
@@ -253,6 +262,7 @@ namespace tango {
         virtual void visit(CallArg&        node) = 0;
         virtual void visit(Identifier&     node) = 0;
         virtual void visit(IntegerLiteral& node) = 0;
+        virtual void visit(BooleanLiteral& node) = 0;
     };
 
 } // namespace tango

@@ -36,7 +36,7 @@ namespace irgen {
         auto main_fun = module.getFunction("main");
 
         // ret i32 <exit_status>
-        llvm::IRBuilder<> tb(&main_fun->getEntryBlock());
+        llvm::IRBuilder<> tb(&main_fun->getBasicBlockList().back());
         tb.CreateRet(
             (exit_status != nullptr)
             ? exit_status
