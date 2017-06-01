@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <fstream>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -264,5 +265,7 @@ namespace tango {
         virtual void visit(IntegerLiteral& node) = 0;
         virtual void visit(BooleanLiteral& node) = 0;
     };
+
+    std::unique_ptr<tango::ASTNode> read_ast(std::ifstream&);
 
 } // namespace tango

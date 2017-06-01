@@ -36,6 +36,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		128136B61EE0BFAD00058EE0 /* json.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
+		12C63D581EE0C07A00BCC04F /* input.ast */ = {isa = PBXFileReference; lastKnownFileType = text; path = input.ast; sourceTree = "<group>"; };
 		12DEB7281ED9C345006B4E37 /* tango */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tango; sourceTree = BUILT_PRODUCTS_DIR; };
 		12DEB72B1ED9C345006B4E37 /* main.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cc; sourceTree = "<group>"; };
 		12DEB7391ED9CBF9006B4E37 /* libncurses.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libncurses.tbd; path = usr/lib/libncurses.tbd; sourceTree = SDKROOT; };
@@ -69,9 +71,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		128136B51EE0BF7C00058EE0 /* json */ = {
+			isa = PBXGroup;
+			children = (
+				128136B61EE0BFAD00058EE0 /* json.hpp */,
+			);
+			path = json;
+			sourceTree = "<group>";
+		};
 		12DEB71F1ED9C345006B4E37 = {
 			isa = PBXGroup;
 			children = (
+				12C63D581EE0C07A00BCC04F /* input.ast */,
+				128136B51EE0BF7C00058EE0 /* json */,
 				12DEB72A1ED9C345006B4E37 /* tango */,
 				12DEB7291ED9C345006B4E37 /* Products */,
 				12DEB7321ED9C589006B4E37 /* Frameworks */,

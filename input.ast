@@ -1,0 +1,347 @@
+{
+  "ModuleDecl": {
+    "__meta__": {},
+    "body": {
+      "Block": {
+        "__meta__": {
+          "return_statements": [],
+          "scope": "main",
+          "symbols": [
+            "f"
+          ]
+        },
+        "statements": [
+          {
+            "FunctionDecl": {
+              "__meta__": {
+                "end": [
+                  18,
+                  1
+                ],
+                "scope": "main",
+                "start": [
+                  13,
+                  1
+                ],
+                "type": "(cst x: Int) -> Int"
+              },
+              "body": {
+                "Block": {
+                  "__meta__": {
+                    "end": [
+                      18,
+                      1
+                    ],
+                    "return_statements": [
+                      "<tango.ast.Return object at 0x105427c18>"
+                    ],
+                    "scope": "main.0",
+                    "start": [
+                      13,
+                      26
+                    ],
+                    "symbols": []
+                  },
+                  "statements": [
+                    {
+                      "If": {
+                        "__meta__": {
+                          "end": [
+                            16,
+                            5
+                          ],
+                          "start": [
+                            14,
+                            5
+                          ],
+                          "symbols": []
+                        },
+                        "body": {
+                          "Block": {
+                            "__meta__": {
+                              "end": [
+                                16,
+                                5
+                              ],
+                              "return_statements": [
+                                "<tango.ast.Return object at 0x105427c88>"
+                              ],
+                              "scope": "main.0.1",
+                              "start": [
+                                14,
+                                14
+                              ],
+                              "symbols": []
+                            },
+                            "statements": [
+                              {
+                                "Return": {
+                                  "__meta__": {
+                                    "end": [
+                                      15,
+                                      27
+                                    ],
+                                    "start": [
+                                      15,
+                                      9
+                                    ]
+                                  },
+                                  "value": {
+                                    "Call": {
+                                      "__meta__": {
+                                        "end": [
+                                          15,
+                                          27
+                                        ],
+                                        "function_call_type": "(cst x: Int) -> Int",
+                                        "start": [
+                                          15,
+                                          16
+                                        ],
+                                        "type": "Int"
+                                      },
+                                      "arguments": [
+                                        {
+                                          "CallArgument": {
+                                            "__meta__": {
+                                              "end": [
+                                                15,
+                                                27
+                                              ],
+                                              "start": [
+                                                15,
+                                                18
+                                              ]
+                                            },
+                                            "label": "x",
+                                            "operator": "=",
+                                            "value": {
+                                              "BinaryExpression": {
+                                                "__meta__": {
+                                                  "end": [
+                                                    15,
+                                                    27
+                                                  ],
+                                                  "function_call_type": "(cst _: Int, cst _: Int) -> Int",
+                                                  "start": [
+                                                    15,
+                                                    22
+                                                  ],
+                                                  "type": "Int"
+                                                },
+                                                "left": {
+                                                  "Identifier": {
+                                                    "__meta__": {
+                                                      "end": [
+                                                        15,
+                                                        23
+                                                      ],
+                                                      "mutability": "cst",
+                                                      "scope": "main.0",
+                                                      "start": [
+                                                        15,
+                                                        22
+                                                      ],
+                                                      "type": "Int"
+                                                    },
+                                                    "name": "x"
+                                                  }
+                                                },
+                                                "operator": "-",
+                                                "right": {
+                                                  "Literal": {
+                                                    "__meta__": {
+                                                      "end": [
+                                                        15,
+                                                        27
+                                                      ],
+                                                      "start": [
+                                                        15,
+                                                        26
+                                                      ],
+                                                      "type": "Int"
+                                                    },
+                                                    "value": "1"
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ],
+                                      "callee": {
+                                        "Identifier": {
+                                          "__meta__": {
+                                            "end": [
+                                              15,
+                                              17
+                                            ],
+                                            "mutability": "cst",
+                                            "scope": "main",
+                                            "start": [
+                                              15,
+                                              16
+                                            ],
+                                            "type": "(cst x: Int) -> Int"
+                                          },
+                                          "name": "f"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        "condition": {
+                          "BinaryExpression": {
+                            "__meta__": {
+                              "end": [
+                                14,
+                                13
+                              ],
+                              "function_call_type": "(cst _: Int, cst _: Int) -> Bool",
+                              "start": [
+                                14,
+                                8
+                              ],
+                              "type": "Bool"
+                            },
+                            "left": {
+                              "Identifier": {
+                                "__meta__": {
+                                  "end": [
+                                    14,
+                                    9
+                                  ],
+                                  "mutability": "cst",
+                                  "scope": "main.0",
+                                  "start": [
+                                    14,
+                                    8
+                                  ],
+                                  "type": "Int"
+                                },
+                                "name": "x"
+                              }
+                            },
+                            "operator": ">",
+                            "right": {
+                              "Literal": {
+                                "__meta__": {
+                                  "end": [
+                                    14,
+                                    13
+                                  ],
+                                  "start": [
+                                    14,
+                                    12
+                                  ],
+                                  "type": "Int"
+                                },
+                                "value": "0"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "Return": {
+                        "__meta__": {
+                          "end": [
+                            17,
+                            13
+                          ],
+                          "start": [
+                            17,
+                            5
+                          ]
+                        },
+                        "value": {
+                          "Identifier": {
+                            "__meta__": {
+                              "end": [
+                                17,
+                                13
+                              ],
+                              "mutability": "cst",
+                              "scope": "main.0",
+                              "start": [
+                                17,
+                                12
+                              ],
+                              "type": "Int"
+                            },
+                            "name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "name": "f",
+              "parameter": {
+                "FunctionParameter": {
+                  "__meta__": {
+                    "end": [
+                      13,
+                      17
+                    ],
+                    "scope": "main.0",
+                    "start": [
+                      13,
+                      7
+                    ],
+                    "type": "Int"
+                  },
+                  "mutability": "cst",
+                  "name": "x",
+                  "type_annotation": {
+                    "Identifier": {
+                      "__meta__": {
+                        "end": [
+                          13,
+                          17
+                        ],
+                        "mutability": "cst",
+                        "scope": "main",
+                        "start": [
+                          13,
+                          14
+                        ],
+                        "type": "Int"
+                      },
+                      "name": "Int"
+                    }
+                  }
+                }
+              },
+              "return_type": {
+                "Identifier": {
+                  "__meta__": {
+                    "end": [
+                      13,
+                      25
+                    ],
+                    "mutability": "cst",
+                    "scope": "main",
+                    "start": [
+                      13,
+                      22
+                    ],
+                    "type": "Int"
+                  },
+                  "name": "Int"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "name": "main"
+  }
+}

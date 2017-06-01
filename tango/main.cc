@@ -25,6 +25,10 @@
 int main(int argc, char* argv[]) {
     using namespace tango;
 
+    std::ifstream ifs(argv[1]);
+    read_ast(ifs);
+    if (argc) { return 0; }
+
     // Create a Tango program.
     TypePtr Int     = tango::IntType::get();
     TypePtr Int_p   = tango::RefType::get(Int);
