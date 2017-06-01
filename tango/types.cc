@@ -28,12 +28,10 @@ namespace tango {
     }
 
     llvm::FunctionType* FunctionType::get_llvm_lifted_type(
-        llvm::LLVMContext& ctx, std::vector<llvm::Type*> free_types) const
+        llvm::LLVMContext& ctx, llvm::StructType* closure_type) const
     {
         std::vector<llvm::Type*> arg_types;
-        for (auto ty: free_types) {
-            arg_types.push_back(ty);
-        }
+        arg_types.push_back(llvm::PointerType::getUnqual(closure_type));
         for (auto ty: this->domain) {
             arg_types.push_back(ty->get_llvm_type(ctx));
         }

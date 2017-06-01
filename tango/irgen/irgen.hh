@@ -9,10 +9,10 @@
 #pragma once
 
 #include <memory>
-#include <set>
 #include <stack>
 #include <string>
 #include <unordered_map>
+#include <vector>
 #include <llvm/IR/IRBuilder.h>
 
 #include "tango/ast.hh"
@@ -39,19 +39,20 @@ namespace irgen {
 
     /// Struct that stores a function object and its capture list.
     struct ClosureInfo {
-        ClosureInfo(FunctionDecl* decl, llvm::Type* pointer_type)
-            : decl(decl), pointer_type(pointer_type) {}
+        ClosureInfo(FunctionDecl* decl, llvm::Type* fun_ptr_type, llvm::StructType* env_type)
+            : decl(decl), fun_ptr_type(fun_ptr_type), env_type(env_type) {}
         ClosureInfo(const ClosureInfo& other)
-            : decl(other.decl), pointer_type(other.pointer_type) {};
+            : decl(other.decl), fun_ptr_type(other.fun_ptr_type), env_type(other.env_type) {};
         ClosureInfo()
-            : decl(nullptr), pointer_type(nullptr) {}
+            : decl(nullptr), fun_ptr_type(nullptr), env_type(nullptr) {}
 
-        FunctionDecl* decl;
-        llvm::Type*   pointer_type;
+        FunctionDecl*     decl;
+        llvm::Type*       fun_ptr_type;
+        llvm::StructType* env_type;
     };
 
     struct IRGenerator: public ASTNodeVisitor {
-        typedef std::set<std::string>                                  LocalCaptures;
+        typedef std::vector<std::string>                               LocalCaptures;
         typedef std::unordered_map<std::string, llvm::AllocaInst*>     LocalSymbolTable;
         typedef std::unordered_map<std::string, llvm::GlobalVariable*> GlobalSymbolTable;
         typedef std::unordered_map<std::string, ClosureInfo>           ClosureInfoTable;
@@ -86,7 +87,7 @@ namespace irgen {
         llvm::Value* get_symbol_location(const std::string& name);
 
         // Returns an LLVM value suitable for GEP indices.
-        llvm::Value* get_gep_index(int idx);
+        llvm::Value* get_gep_index(std::size_t idx);
 
         /// A reference to the LLVM module being generated.
         llvm::Module& module;

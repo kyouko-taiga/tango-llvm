@@ -92,10 +92,10 @@ namespace tango {
 
         llvm::Type* get_llvm_type(llvm::LLVMContext&) const;
 
-        /// Same as #get_llvm_type, but adding the fonction's environment as
-        /// its first parameter.
+        /// Same as #get_llvm_type, but adding a pointer to a closure instance
+        /// as its first parameter.
         llvm::FunctionType* get_llvm_lifted_type(
-            llvm::LLVMContext&, std::vector<llvm::Type*> free_types) const;
+            llvm::LLVMContext&, llvm::StructType* closure_type) const;
 
         std::vector<TypePtr>     domain;
         std::vector<std::string> labels;

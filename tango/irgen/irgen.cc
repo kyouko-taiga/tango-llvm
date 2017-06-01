@@ -6,6 +6,7 @@
 //  Copyright © 2017 University of Geneva. All rights reserved.
 //
 
+#include <algorithm>
 #include <llvm/IR/Verifier.h>
 
 #include "irgen.hh"
@@ -61,26 +62,45 @@ namespace irgen {
 
     llvm::Value* IRGenerator::get_symbol_location(const std::string& name) {
         if (!locals.empty()) {
-            auto local_it = locals.top().find(name);
-            if (local_it != locals.top().end()) {
-                // Dereference the location if the symbol has been captured.
-                if (local_captures.top().find(name) != local_captures.top().end()) {
-                    return builder.CreateLoad(local_it->second);
-                }
-                return local_it->second;
+            auto it = locals.top().find(name);
+            if (it != locals.top().end()) {
+                return it->second;
             }
         }
 
-        auto global_it = globals.find(name);
-        if (global_it != globals.end()) {
-            return global_it->second;
+        if (!local_captures.empty()) {
+            auto fun_name = builder.GetInsertBlock()->getParent()->getName();
+            auto it       = locals.top().find(fun_name);
+            if (it != locals.top().end()) {
+                auto closure = builder.CreateLoad(it->second);
+                if (name == fun_name) {
+                    return it->second;
+                }
+
+                auto captures   = local_captures.top();
+                auto capture_it = std::find(captures.begin(), captures.end(), name);
+                if (capture_it != captures.end()) {
+                    auto zero    = get_gep_index(0);
+                    auto raw_ptr = builder.CreateLoad(
+                        builder.CreateGEP(closure, {zero, get_gep_index(1)}));
+                    auto env_ptr = builder.CreateBitCast(
+                        raw_ptr, llvm::PointerType::getUnqual(closures[fun_name].env_type));
+                    auto idx     = get_gep_index(std::distance(captures.begin(), capture_it));
+                    return builder.CreateLoad(builder.CreateGEP(env_ptr, {zero, idx}));
+                }
+            }
+        }
+
+        auto it = globals.find(name);
+        if (it != globals.end()) {
+            return it->second;
         }
 
         throw std::invalid_argument("undefined symbol");
     }
 
 
-    llvm::Value* IRGenerator::get_gep_index(int idx) {
+    llvm::Value* IRGenerator::get_gep_index(std::size_t idx) {
         return llvm::ConstantInt::get(module.getContext(), llvm::APInt(32, idx, false));
     }
 
